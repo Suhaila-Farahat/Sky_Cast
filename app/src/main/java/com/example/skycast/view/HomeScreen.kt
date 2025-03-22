@@ -30,8 +30,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
         contentAlignment = Alignment.Center
     ) {
         weatherState?.let {
-            WeatherContent(viewModel)
-
+            WeatherContent(it)
         } ?: CircularProgressIndicator(color = Color.White)
     }
 }

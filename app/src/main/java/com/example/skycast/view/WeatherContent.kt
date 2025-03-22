@@ -14,34 +14,33 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.skycast.data.remote.WeatherResponse
-import com.example.skycast.viewModel.HomeViewModel
+import com.example.skycast.utils.WeatherIconUtil
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Composable
-fun WeatherContent(viewModel: HomeViewModel) {
-    val weatherState by viewModel.weatherState.collectAsState()
-    val currentDate by viewModel.formattedDate.collectAsState()
-    val sunsetTime by viewModel.sunsetTime.collectAsState()
-    val weatherCondition by viewModel.weatherCondition.collectAsState()
-    val weatherIconId by viewModel.weatherIconId.collectAsState()
+fun WeatherContent(weather: WeatherResponse) {
+    val currentDate by remember { mutableStateOf(getFormattedDate()) }
+    val sunsetTime by remember { mutableStateOf(formatUnixTime(weather.sys.sunset)) }
+    val weatherCondition by remember { mutableStateOf(getWeatherCondition(weather)) }
+    val weatherIconId by rememberUpdatedState(WeatherIconUtil.getWeatherIcon(weather.weather.firstOrNull()?.icon ?: "01d"))
 
     val weatherIcon = loadWeatherIcon(weatherIconId)
 
-    weatherState?.let { weather ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            WeatherHeader(city = weather.name, date = currentDate)
-            Spacer(modifier = Modifier.height(8.dp))
-            WeatherIconDisplay(weatherIcon)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = weatherCondition, color = Color.White, fontSize = 25.sp)
-            WeatherStats(weather)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "\uD83C\uDF05 Sunset: $sunsetTime", color = Color.White, fontSize = 20.sp)
-        }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        WeatherHeader(city = weather.name, date = currentDate)
+        Spacer(modifier = Modifier.height(8.dp))
+        WeatherIconDisplay(weatherIcon)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = weatherCondition, color = Color.White, fontSize = 25.sp)
+        WeatherStats(weather)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = "\uD83C\uDF05 Sunset: $sunsetTime", color = Color.White, fontSize = 20.sp)
     }
 }
 
@@ -100,4 +99,17 @@ fun loadWeatherIcon(weatherIconId: Int): ImageBitmap? {
         }
     }
     return weatherIcon
+}
+
+fun formatUnixTime(timestamp: Long): String {
+    val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
+    return sdf.format(Date(timestamp * 1000))
+}
+
+fun getFormattedDate(): String {
+    return SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(Date())
+}
+
+fun getWeatherCondition(weather: WeatherResponse): String {
+    return weather.weather.firstOrNull()?.description?.replaceFirstChar { it.uppercaseChar() } ?: "Unknown"
 }
