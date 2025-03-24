@@ -34,9 +34,9 @@ fun WeatherContent(weather: WeatherResponse) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         WeatherHeader(city = weather.name, date = currentDate)
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         WeatherIconDisplay(weatherIcon)
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         Text(text = weatherCondition, color = Color.White, fontSize = 25.sp)
         WeatherStats(weather)
         Spacer(modifier = Modifier.height(8.dp))
@@ -56,7 +56,7 @@ fun WeatherHeader(city: String, date: String) {
 @Composable
 fun WeatherIconDisplay(weatherIcon: ImageBitmap?) {
     if (weatherIcon != null) {
-        Image(bitmap = weatherIcon, contentDescription = "Weather Icon", modifier = Modifier.size(230.dp))
+        Image(bitmap = weatherIcon, contentDescription = "Weather Icon", modifier = Modifier.size(200.dp))
     } else {
         Text("Icon not found", color = Color.White, fontSize = 20.sp)
     }

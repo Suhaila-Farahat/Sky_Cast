@@ -16,7 +16,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
     val weatherState by viewModel.weatherState.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.fetchWeather("Hilo")
+        viewModel.fetchWeather()
     }
 
     Box(

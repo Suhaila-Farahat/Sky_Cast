@@ -6,8 +6,7 @@ import com.example.skycast.data.remote.WeatherResponse
 class WeatherRepository {
     private val api = RetrofitClient.apiService
 
-    suspend fun getWeather(city: String, apiKey: String): WeatherResponse {
-        return api.getCurrentWeather(city, apiKey)
+    suspend fun getWeather(lat: Double, lon: Double, apiKey: String): WeatherResponse {
+        return api.getCurrentWeather(lat, lon, apiKey)
     }
 }
-

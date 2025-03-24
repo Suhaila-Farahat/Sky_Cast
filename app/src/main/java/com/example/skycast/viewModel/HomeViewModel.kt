@@ -1,37 +1,47 @@
 package com.example.skycast.viewModel
 
-import androidx.lifecycle.ViewModel
+import android.annotation.SuppressLint
+import android.app.Application
+import android.location.Location
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.skycast.data.remote.WeatherResponse
 import com.example.skycast.data.repo.WeatherRepository
-import com.example.skycast.utils.WeatherIconUtil
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.*
 
-class HomeViewModel(private val repository: WeatherRepository = WeatherRepository()) : ViewModel() {
+class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
+    private val weatherRepository = WeatherRepository()
     private val _weatherState = MutableStateFlow<WeatherResponse?>(null)
     val weatherState: StateFlow<WeatherResponse?> = _weatherState
 
-    private val _hourlyForecast = MutableStateFlow<List<Pair<String, Int>>>(emptyList())
-    val hourlyForecast: StateFlow<List<Pair<String, Int>>> = _hourlyForecast
+    private val fusedLocationClient: FusedLocationProviderClient =
+        LocationServices.getFusedLocationProviderClient(application)
 
-    fun fetchWeather(city: String) {
-        val apiKey = "8755b9ff4dd0618b1c87b51cb91b4044"
+    private val API_KEY = "8755b9ff4dd0618b1c87b51cb91b4044"
+
+    fun fetchWeather() {
+        getLastLocation()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getLastLocation() {
+        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+            location?.let {
+                fetchWeatherByLocation(it.latitude, it.longitude)
+            }
+        }
+    }
+
+    private fun fetchWeatherByLocation(lat: Double, lon: Double) {
         viewModelScope.launch {
             try {
-                val weather = repository.getWeather(city, apiKey)
+                val weather = weatherRepository.getWeather(lat, lon, API_KEY)
                 _weatherState.value = weather
-
-                // Generate mock hourly data (Replace this with real API response when available)
-                _hourlyForecast.value = listOf(
-                    "14:00" to (weather.main.temp.toInt() + 1),
-                    "15:00" to weather.main.temp.toInt(),
-                    "16:00" to (weather.main.temp.toInt() - 1)
-                )
             } catch (e: Exception) {
                 e.printStackTrace()
             }
