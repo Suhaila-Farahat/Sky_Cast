@@ -1,4 +1,4 @@
-package com.example.skycast.view
+package com.example.skycast.view.homeScreen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -19,9 +19,6 @@ import com.example.skycast.data.model.WeatherResponse
 import com.example.skycast.utils.WeatherIconUtil
 import com.example.skycast.utils.getFormattedDate
 import com.example.skycast.utils.getFormattedTime
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @SuppressLint("RememberReturnType")
 @Composable

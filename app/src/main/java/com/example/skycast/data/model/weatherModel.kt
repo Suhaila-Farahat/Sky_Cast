@@ -60,3 +60,4 @@ data class CityInfo(
     val name: String,
     val country: String
 )
+

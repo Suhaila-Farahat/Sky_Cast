@@ -1,9 +1,11 @@
-package com.example.skycast.view
+package com.example.skycast.view.homeScreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -11,11 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.skycast.data.model.HourlyWeather
-import com.example.skycast.viewmodel.HomeViewModel
-import com.example.skycast.utils.getFormattedDate
+import com.example.skycast.viewModel.HomeViewModel
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
@@ -41,7 +41,9 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
             else -> {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()) // Enables scrolling
                 ) {
                     Spacer(modifier = Modifier.height(32.dp))
 
@@ -63,9 +65,9 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
                             HourlyWeatherItem(hourlyWeather)
                         }
                     }
+
                 }
             }
         }
     }
 }
-

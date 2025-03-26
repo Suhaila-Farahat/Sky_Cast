@@ -1,4 +1,4 @@
-package com.example.skycast.viewmodel
+package com.example.skycast.viewModel
 
 import android.annotation.SuppressLint
 import android.app.Application
@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.skycast.data.model.ForecastResponse
 import com.example.skycast.data.model.WeatherResponse
-import com.example.skycast.repository.WeatherRepository
+import com.example.skycast.data.repo.WeatherRepository
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -68,6 +68,7 @@ class HomeViewModelFactory(
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
             return HomeViewModel(application, repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
