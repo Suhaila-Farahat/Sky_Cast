@@ -1,23 +1,42 @@
 package com.example.skycast.view
 
+import android.Manifest
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
-import com.example.skycast.ui.theme.SkyCastTheme
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import androidx.compose.material3.MaterialTheme
+import com.example.skycast.data.remote.RemoteDataSource
+import com.example.skycast.data.remote.RetrofitClient
+import com.example.skycast.viewmodel.HomeViewModel
+import com.example.skycast.viewmodel.HomeViewModelFactory
 
 class MainActivity : ComponentActivity() {
+
+    private val remoteDataSource = RemoteDataSource(RetrofitClient.apiService)
+
+    private val homeViewModel: HomeViewModel by viewModels {
+        HomeViewModelFactory(application, remoteDataSource)
+    }
+
+    private val locationPermissionRequest =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                homeViewModel.fetchWeather()
+            } else {
+                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        locationPermissionRequest.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+
         setContent {
-            SkyCastTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    HomeScreen()
-                }
+            MaterialTheme {
+                HomeScreen(homeViewModel)
             }
         }
     }
