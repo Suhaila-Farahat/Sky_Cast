@@ -3,6 +3,7 @@ package com.example.skycast.viewModel
 import android.annotation.SuppressLint
 import android.app.Application
 import android.location.Location
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
@@ -26,6 +27,9 @@ class HomeViewModel(application: Application, private val repository: WeatherRep
     private val _hourlyForecast = MutableStateFlow<ForecastResponse?>(null)
     val hourlyForecast: StateFlow<ForecastResponse?> = _hourlyForecast
 
+    private val _currentLocation = MutableStateFlow<Location?>(null)
+    val currentLocation: StateFlow<Location?> = _currentLocation
+
     private val fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(application)
 
@@ -40,6 +44,7 @@ class HomeViewModel(application: Application, private val repository: WeatherRep
     private fun getLastLocation() {
         fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
             if (location == null) return@addOnSuccessListener
+            updateCurrentLocation(location.latitude, location.longitude)
             fetchWeatherByLocation(location.latitude, location.longitude)
             fetchHourlyForecast(location.latitude, location.longitude)
         }.addOnFailureListener {
@@ -47,17 +52,36 @@ class HomeViewModel(application: Application, private val repository: WeatherRep
         }
     }
 
-    private fun fetchWeatherByLocation(lat: Double, lon: Double) {
-        viewModelScope.launch {
-            val weather = repository.getWeather(lat, lon, API_KEY)
-            _weatherState.value = weather
+    fun updateCurrentLocation(lat: Double, lon: Double) {
+        _currentLocation.value = Location("").apply {
+            latitude = lat
+            longitude = lon
         }
     }
 
-    private fun fetchHourlyForecast(lat: Double, lon: Double) {
+    fun fetchWeatherByLocation(lat: Double, lon: Double) {
         viewModelScope.launch {
-            val forecast = repository.getHourlyForecast(lat, lon, API_KEY)
-            _hourlyForecast.value = forecast
+            try {
+                Log.d("HomeViewModel", "Fetching weather for: ($lat, $lon)")
+                val weather = repository.getWeather(lat, lon, API_KEY)
+                _weatherState.value = weather
+                Log.d("HomeViewModel", "✅ Weather updated: ${weather.main.temp}°C, ${weather.weather.firstOrNull()?.description}")
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "❌ Error fetching weather: ${e.message}")
+            }
+        }
+    }
+
+    fun fetchHourlyForecast(lat: Double, lon: Double) {
+        viewModelScope.launch {
+            try {
+                Log.d("HomeViewModel", "Fetching hourly forecast for: ($lat, $lon)")
+                val forecast = repository.getHourlyForecast(lat, lon, API_KEY)
+                _hourlyForecast.value = forecast
+                Log.d("HomeViewModel", "✅ Forecast updated: ${forecast.list.size} entries")
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "❌ Error fetching forecast: ${e.message}")
+            }
         }
     }
 }

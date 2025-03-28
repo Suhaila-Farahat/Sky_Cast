@@ -36,7 +36,7 @@ class FavoriteViewModel(private val repository: WeatherRepository) : ViewModel()
     fun removeFavorite(location: FavoriteLocationEntity) {
         viewModelScope.launch {
             repository.removeFavoriteLocation(location)
-            loadFavorites() // Refresh favorites after removing
+            loadFavorites()
         }
     }
 }
