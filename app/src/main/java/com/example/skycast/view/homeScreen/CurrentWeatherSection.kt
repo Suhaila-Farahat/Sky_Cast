@@ -19,6 +19,7 @@ import com.example.skycast.data.model.WeatherResponse
 import com.example.skycast.utils.WeatherIconUtil
 import com.example.skycast.utils.getFormattedDate
 import com.example.skycast.utils.getFormattedTime
+import kotlin.math.roundToInt
 
 @SuppressLint("RememberReturnType")
 @Composable
@@ -84,7 +85,7 @@ fun WeatherStatsCard(weather: WeatherResponse) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                WeatherDetail(value = "${weather.main.temp.toInt()}°C", label = "Temperature")
+                WeatherDetail(value = "${weather.main.temp.roundToInt()}°C", label = "Temperature")
                 WeatherDetail(value = "${weather.wind.speed.toInt()} km/h", label = "Wind Speed")
             }
             Spacer(modifier = Modifier.height(12.dp))

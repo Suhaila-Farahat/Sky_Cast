@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.sp
 import com.example.skycast.data.model.HourlyWeather
 import com.example.skycast.utils.WeatherIconUtil
 import com.example.skycast.utils.formatTimestamp
+import kotlin.math.roundToInt
 
 
 @Composable
@@ -38,7 +39,7 @@ fun HourlyWeatherItem(weather: HourlyWeather) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "${weather.temperature.toInt()}°C",
+                text = "${weather.temperature.roundToInt()}°C",
                 color = Color.White,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
