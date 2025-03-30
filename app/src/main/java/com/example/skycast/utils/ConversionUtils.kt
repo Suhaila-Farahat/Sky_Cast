@@ -37,7 +37,6 @@ fun kelvinToFahrenheit(kelvin: Double): Double = celsiusToFahrenheit(kelvinToCel
 
 
 
-
 fun convertWindSpeed(speed: Double, fromUnit: String, toUnit: String): Double {
     if (fromUnit.lowercase() == toUnit.lowercase()) return speed
 
