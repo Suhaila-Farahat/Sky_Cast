@@ -59,7 +59,7 @@ fun MapScreen(onLocationSelected: (FavoriteLocationEntity) -> Unit, onDismiss: (
                     modifier = Modifier.weight(1f),
                     factory = { context ->
                         AutoCompleteTextView(context).apply {
-                            setSingleLine(true)
+                            isSingleLine = true
                             imeOptions = EditorInfo.IME_ACTION_SEARCH
                             setAdapter(ArrayAdapter(context, android.R.layout.simple_dropdown_item_1line, suggestions))
 
@@ -91,7 +91,7 @@ fun MapScreen(onLocationSelected: (FavoriteLocationEntity) -> Unit, onDismiss: (
                                             locationName = getLocationName(context, location.latitude, location.longitude)
 
                                             coroutineScope.launch(Dispatchers.Main) {
-                                                cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(location, 12f))
+                                                cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(location, 8f))
                                             }
                                         }
                                     }
@@ -125,7 +125,7 @@ fun MapScreen(onLocationSelected: (FavoriteLocationEntity) -> Unit, onDismiss: (
                     locationName = getLocationName(context, latLng.latitude, latLng.longitude)
 
                     // Move camera to clicked location
-                    cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(latLng, 12f))
+                    cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(latLng, 8f))
                 }
             ) {
                 selectedLocation?.let {

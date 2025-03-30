@@ -1,6 +1,9 @@
 package com.example.skycast
 
+import ForecastScreen
 import android.Manifest
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -33,50 +36,59 @@ import com.example.skycast.data.local.LocalDataSource
 import com.example.skycast.data.remote.RemoteDataSource
 import com.example.skycast.data.remote.RetrofitClient
 import com.example.skycast.data.repo.WeatherRepository
-import com.example.skycast.view.SettingsScreen
+import com.example.skycast.view.settingScreen.SettingsScreen
 import com.example.skycast.view.WeatherAlertsScreen
 import com.example.skycast.view.favouriteScreen.FavoriteScreen
-import com.example.skycast.view.favouriteScreen.ForecastScreen
 import com.example.skycast.view.homeScreen.HomeScreen
 import com.example.skycast.view.navigation.BottomBarRoutes
 import com.example.skycast.viewModel.FavoriteViewModel
 import com.example.skycast.viewModel.FavoriteViewModelFactory
 import com.example.skycast.viewModel.HomeViewModel
 import com.example.skycast.viewModel.HomeViewModelFactory
+import com.example.skycast.viewModel.SettingsViewModel
+import com.example.skycast.viewModel.SettingsViewModelFactory
 
 class MainActivity : ComponentActivity() {
 
-    private val homeViewModel: HomeViewModel by viewModels {
-        HomeViewModelFactory(
-            application,
-            WeatherRepository(
-                RemoteDataSource(RetrofitClient.apiService),
-                LocalDataSource(FavoriteDatabase.getDatabase(application).favoriteLocationDao())
-            )
+    private val sharedPreferences: SharedPreferences by lazy {
+        getSharedPreferences("UserSettings", Context.MODE_PRIVATE)
+    }
+
+    private val weatherRepository: WeatherRepository by lazy {
+        WeatherRepository(
+            RemoteDataSource(RetrofitClient.apiService),
+            LocalDataSource(FavoriteDatabase.getDatabase(application).favoriteLocationDao()),
+            sharedPreferences
         )
+    }
+
+    private val homeViewModel: HomeViewModel by viewModels {
+        HomeViewModelFactory(application, weatherRepository)
     }
 
     private val favoriteViewModel: FavoriteViewModel by viewModels {
-        FavoriteViewModelFactory(
-            WeatherRepository(
-                RemoteDataSource(RetrofitClient.apiService),
-                LocalDataSource(FavoriteDatabase.getDatabase(application).favoriteLocationDao())
-            )
-        )
+        FavoriteViewModelFactory(weatherRepository)
     }
 
-    private val locationPermissionRequest = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            val isGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false ||
-                    permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
-            if (isGranted) {
-                homeViewModel.fetchWeather()
-            } else {
-                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show()
-            }
+    private val settingsViewModel: SettingsViewModel by viewModels {
+        SettingsViewModelFactory(weatherRepository)
+    }
+
+    private val locationPermissionRequest = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val isGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false ||
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
+        if (isGranted) {
+            homeViewModel.fetchWeather()
+        } else {
+            Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show()
         }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         locationPermissionRequest.launch(
             arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -86,28 +98,42 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme {
-                MainScreen(homeViewModel, favoriteViewModel)
+                MainScreen(homeViewModel, favoriteViewModel, settingsViewModel)
             }
         }
     }
 }
 
 @Composable
-fun MainScreen(homeViewModel: HomeViewModel, favoriteViewModel: FavoriteViewModel) {
+fun MainScreen(
+    homeViewModel: HomeViewModel,
+    favoriteViewModel: FavoriteViewModel,
+    settingsViewModel: SettingsViewModel
+) {
     val navController = rememberNavController()
 
     Scaffold(
         bottomBar = { BottomNavigationBar(navController) }
     ) { paddingValues ->
-        NavigationGraph(navController, homeViewModel, favoriteViewModel, Modifier.padding(paddingValues))
+        NavigationGraph(
+            navController,
+            homeViewModel,
+            favoriteViewModel,
+            settingsViewModel,
+            Modifier.padding(paddingValues)
+        )
     }
 }
+
+
+
 
 @Composable
 fun NavigationGraph(
     navController: NavHostController,
     homeViewModel: HomeViewModel,
     favoriteViewModel: FavoriteViewModel,
+    settingsViewModel: SettingsViewModel,
     modifier: Modifier
 ) {
     NavHost(
@@ -115,7 +141,7 @@ fun NavigationGraph(
         startDestination = BottomBarRoutes.Home.title,
         modifier = modifier
     ) {
-        composable(BottomBarRoutes.Home.title) { HomeScreen(homeViewModel) }
+        composable(BottomBarRoutes.Home.title) { HomeScreen(homeViewModel,settingsViewModel) }
         composable(BottomBarRoutes.Favorites.title) {
             FavoriteScreen(favoriteViewModel) { location ->
                 Log.d("FavoriteScreen", "Navigating to Forecast with: ${location.name}, ${location.latitude}, ${location.longitude}")
@@ -123,21 +149,18 @@ fun NavigationGraph(
             }
         }
         composable(BottomBarRoutes.WeatherAlerts.title) { WeatherAlertsScreen() }
-        composable(BottomBarRoutes.Settings.title) { SettingsScreen() }
+        composable(BottomBarRoutes.Settings.title) { SettingsScreen(settingsViewModel) }
 
-        // Forecast screen route
         composable("forecast/{lat}/{lon}/{name}") { backStackEntry ->
             val lat = backStackEntry.arguments?.getString("lat")?.toDoubleOrNull() ?: 0.0
             val lon = backStackEntry.arguments?.getString("lon")?.toDoubleOrNull() ?: 0.0
             val name = backStackEntry.arguments?.getString("name") ?: "Unknown"
 
             val location = FavoriteLocationEntity(name = name, latitude = lat, longitude = lon)
-            ForecastScreen(location, homeViewModel)
+            ForecastScreen(location, homeViewModel,settingsViewModel)
         }
     }
 }
-
-
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
@@ -175,13 +198,13 @@ fun BottomNavigationBar(navController: NavController) {
                     Icon(
                         painter = painterResource(id = screen.icon),
                         contentDescription = screen.title,
-                        tint =  Color.White
+                        tint = Color.White
                     )
                 },
                 label = {
                     Text(
                         text = screen.title,
-                        color =  Color.White,
+                        color = Color.White,
                         fontSize = 12.sp,
                         fontWeight = if (currentDestination == screen.title) FontWeight.Bold else FontWeight.Normal
                     )

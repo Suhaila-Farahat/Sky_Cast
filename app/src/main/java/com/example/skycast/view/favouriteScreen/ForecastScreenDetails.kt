@@ -1,7 +1,5 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.example.skycast.view.favouriteScreen
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -19,15 +17,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.skycast.data.local.FavoriteLocationEntity
 import com.example.skycast.utils.WeatherIconUtil
+import com.example.skycast.utils.convertTemperature
 import com.example.skycast.viewModel.HomeViewModel
+import com.example.skycast.viewModel.SettingsViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
 @Composable
-fun ForecastScreen(location: FavoriteLocationEntity, viewModel: HomeViewModel) {
+fun ForecastScreen(location: FavoriteLocationEntity, viewModel: HomeViewModel, settingsViewModel: SettingsViewModel) {
     val weatherData by viewModel.weatherState.collectAsState(initial = null)
     val forecastData by viewModel.hourlyForecast.collectAsState(initial = null)
+    val temperatureUnit by settingsViewModel.temperatureUnit.collectAsState()
 
     LaunchedEffect(location.latitude, location.longitude) {
         viewModel.fetchWeatherByLocation(location.latitude, location.longitude)
@@ -61,6 +62,7 @@ fun ForecastScreen(location: FavoriteLocationEntity, viewModel: HomeViewModel) {
                         val icon = WeatherIconUtil.getWeatherIcon(weather.weather.firstOrNull()?.icon ?: "")
                         val dateFormat = SimpleDateFormat("EEEE, MMM d", Locale.getDefault()).format(Date())
                         val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date())
+                        val tempValue = convertTemperature(weather.main.temp, "celsius", temperatureUnit).roundToInt()
 
                         Card(
                             modifier = Modifier.fillMaxWidth(),
@@ -77,7 +79,7 @@ fun ForecastScreen(location: FavoriteLocationEntity, viewModel: HomeViewModel) {
                                 )
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column {
-                                    Text("${weather.main.temp.roundToInt()}°C", fontSize = 48.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                    Text("${tempValue}°$temperatureUnit", fontSize = 25.sp, fontWeight = FontWeight.Bold, color = Color.White)
                                     Text(weather.weather.firstOrNull()?.description ?: "No data", fontSize = 18.sp, color = Color.White)
                                     Spacer(modifier = Modifier.height(12.dp))
                                     Text(dateFormat, fontSize = 14.sp, color = Color.LightGray)
@@ -100,6 +102,7 @@ fun ForecastScreen(location: FavoriteLocationEntity, viewModel: HomeViewModel) {
                     items(list) { item ->
                         val icon = WeatherIconUtil.getWeatherIcon(item.weather.firstOrNull()?.icon ?: "")
                         val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date(item.dt * 1000L))
+                        val tempValue = convertTemperature(item.main.temp, "celsius", temperatureUnit).roundToInt()
 
                         Card(
                             modifier = Modifier
@@ -119,7 +122,7 @@ fun ForecastScreen(location: FavoriteLocationEntity, viewModel: HomeViewModel) {
                                     contentDescription = null,
                                     modifier = Modifier.size(80.dp)
                                 )
-                                Text(text = "${item.main.temp.roundToInt()}°C", fontSize = 30.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                Text(text = "${tempValue}°$temperatureUnit", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
                                 Text(text = timeFormat, fontSize = 16.sp, color = Color.White)
                             }
                         }
