@@ -1,3 +1,5 @@
+package com.example.skycast.view.homeScreen
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,6 +24,12 @@ fun HourlyWeatherItem(weather: HourlyWeather, settingsViewModel: SettingsViewMod
     val temperatureUnit by settingsViewModel.temperatureUnit.collectAsState()
     val tempValue = convertTemperature(weather.temperature, "celsius", temperatureUnit).roundToInt()
 
+    val tempUnitSymbol = when (temperatureUnit) {
+        "Fahrenheit" -> "°F"
+        "Kelvin" -> "K"
+        else -> "°C"
+    }
+
     Card(
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF334155)),
@@ -41,16 +49,16 @@ fun HourlyWeatherItem(weather: HourlyWeather, settingsViewModel: SettingsViewMod
                 contentDescription = "Weather Icon",
                 modifier = Modifier.size(70.dp)
             )
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(20.dp))
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "$tempValue° $temperatureUnit",
+                    text = "$tempValue$tempUnitSymbol",
                     color = Color.White,
-                    fontSize = 14.sp,
+                    fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(6.dp))
@@ -58,7 +66,7 @@ fun HourlyWeatherItem(weather: HourlyWeather, settingsViewModel: SettingsViewMod
                 Text(
                     text = formatTimestamp(weather.timestamp),
                     color = Color.White.copy(alpha = 0.7f),
-                    fontSize = 14.sp
+                    fontSize = 18.sp
                 )
             }
         }

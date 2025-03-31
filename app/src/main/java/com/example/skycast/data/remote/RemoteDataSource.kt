@@ -13,4 +13,8 @@ class RemoteDataSource(private val apiService: WeatherApiService) {
     suspend fun getHourlyForecast(lat: Double, lon: Double, apiKey: String): ForecastResponse {
         return apiService.getHourlyForecast(lat, lon, apiKey)
     }
+
+    suspend fun get5DayForecast(lat: Double, lon: Double, apiKey: String): ForecastResponse {
+        return apiService.get5DayForecast(lat, lon, apiKey)
+    }
 }

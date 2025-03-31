@@ -28,6 +28,14 @@ data class HourlyWeather(
     val weatherIcon: String
 )
 
+data class DailyWeather(
+    val date: String,
+    val timestamp: Long,
+    val maxTemp: Double,
+    val minTemp: Double,
+    val weatherIcon: String,
+    val description: String
+)
 
 data class WeatherResponse(
     val name: String,

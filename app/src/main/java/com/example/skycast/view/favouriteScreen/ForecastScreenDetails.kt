@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import com.example.skycast.data.local.FavoriteLocationEntity
 import com.example.skycast.utils.WeatherIconUtil
 import com.example.skycast.utils.convertTemperature
+import com.example.skycast.utils.convertWindSpeed
 import com.example.skycast.viewModel.HomeViewModel
 import com.example.skycast.viewModel.SettingsViewModel
 import java.text.SimpleDateFormat
@@ -29,6 +30,13 @@ fun ForecastScreen(location: FavoriteLocationEntity, viewModel: HomeViewModel, s
     val weatherData by viewModel.weatherState.collectAsState(initial = null)
     val forecastData by viewModel.hourlyForecast.collectAsState(initial = null)
     val temperatureUnit by settingsViewModel.temperatureUnit.collectAsState()
+    val windSpeedUnit by settingsViewModel.windSpeedUnit.collectAsState()
+
+    val tempUnitSymbol = when (temperatureUnit) {
+        "Fahrenheit" -> "°F"
+        "Kelvin" -> "K"
+        else -> "°C"
+    }
 
     LaunchedEffect(location.latitude, location.longitude) {
         viewModel.fetchWeatherByLocation(location.latitude, location.longitude)
@@ -62,7 +70,9 @@ fun ForecastScreen(location: FavoriteLocationEntity, viewModel: HomeViewModel, s
                         val icon = WeatherIconUtil.getWeatherIcon(weather.weather.firstOrNull()?.icon ?: "")
                         val dateFormat = SimpleDateFormat("EEEE, MMM d", Locale.getDefault()).format(Date())
                         val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date())
+
                         val tempValue = convertTemperature(weather.main.temp, "celsius", temperatureUnit).roundToInt()
+                        val windSpeed = convertWindSpeed(weather.wind.speed, "kmh", windSpeedUnit).roundToInt()
 
                         Card(
                             modifier = Modifier.fillMaxWidth(),
@@ -79,13 +89,13 @@ fun ForecastScreen(location: FavoriteLocationEntity, viewModel: HomeViewModel, s
                                 )
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column {
-                                    Text("${tempValue}°$temperatureUnit", fontSize = 25.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                    Text("${tempValue}${tempUnitSymbol}", fontSize = 25.sp, fontWeight = FontWeight.Bold, color = Color.White)
                                     Text(weather.weather.firstOrNull()?.description ?: "No data", fontSize = 18.sp, color = Color.White)
                                     Spacer(modifier = Modifier.height(12.dp))
                                     Text(dateFormat, fontSize = 14.sp, color = Color.LightGray)
                                     Text(timeFormat, fontSize = 14.sp, color = Color.LightGray)
                                     Text("💧 Humidity: ${weather.main.humidity}%", fontSize = 14.sp, color = Color.LightGray)
-                                    Text("🌬 Wind: ${weather.wind.speed} m/s", fontSize = 14.sp, color = Color.LightGray)
+                                    Text("🌬 Wind: ${windSpeed} ${windSpeedUnit}", fontSize = 14.sp, color = Color.LightGray)
                                     Text("🌡 Pressure: ${weather.main.pressure} hPa", fontSize = 14.sp, color = Color.LightGray)
                                     Text("☁ Clouds: ${weather.clouds.Clouds}%", fontSize = 14.sp, color = Color.LightGray)
                                 }
@@ -122,7 +132,7 @@ fun ForecastScreen(location: FavoriteLocationEntity, viewModel: HomeViewModel, s
                                     contentDescription = null,
                                     modifier = Modifier.size(80.dp)
                                 )
-                                Text(text = "${tempValue}°$temperatureUnit", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                Text(text = "${tempValue}${tempUnitSymbol}", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White)
                                 Text(text = timeFormat, fontSize = 16.sp, color = Color.White)
                             }
                         }

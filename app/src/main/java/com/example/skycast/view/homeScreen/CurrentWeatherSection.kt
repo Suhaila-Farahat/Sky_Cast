@@ -32,6 +32,12 @@ fun CurrentWeatherSection(weather: WeatherResponse, settingsViewModel: SettingsV
     val temperatureUnit by settingsViewModel.temperatureUnit.collectAsState()
     val windSpeedUnit by settingsViewModel.windSpeedUnit.collectAsState()
 
+    val tempUnitSymbol = when (temperatureUnit) {
+        "Fahrenheit" -> "°F"
+        "Kelvin" -> "K"
+        else -> "°C"
+    }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
@@ -43,7 +49,7 @@ fun CurrentWeatherSection(weather: WeatherResponse, settingsViewModel: SettingsV
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "$currentDate | $currentTime",
+            text = "$currentDate || $currentTime",
             color = Color.White.copy(alpha = 0.7f),
             fontSize = 18.sp
         )
@@ -51,7 +57,7 @@ fun CurrentWeatherSection(weather: WeatherResponse, settingsViewModel: SettingsV
 
         Text(
             text = weather.weather.firstOrNull()?.description?.replaceFirstChar { it.uppercase() }
-                ?: "Mostly Cloudy",
+                ?: "No Description Detected",
             color = Color.White,
             fontSize = 22.sp,
             fontWeight = FontWeight.Medium
@@ -65,12 +71,12 @@ fun CurrentWeatherSection(weather: WeatherResponse, settingsViewModel: SettingsV
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        WeatherStatsCard(weather, temperatureUnit, windSpeedUnit)
+        WeatherStatsCard(weather, temperatureUnit, tempUnitSymbol, windSpeedUnit)
     }
 }
 
 @Composable
-fun WeatherStatsCard(weather: WeatherResponse, temperatureUnit: String, windSpeedUnit: String) {
+fun WeatherStatsCard(weather: WeatherResponse, temperatureUnit: String, tempUnitSymbol: String, windSpeedUnit: String) {
     val tempValue = convertTemperature(weather.main.temp, "celsius", temperatureUnit).roundToInt()
     val windSpeed = convertWindSpeed(weather.wind.speed, "kmh", windSpeedUnit).roundToInt()
 
@@ -89,7 +95,7 @@ fun WeatherStatsCard(weather: WeatherResponse, temperatureUnit: String, windSpee
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                WeatherDetail(value = "$tempValue° $temperatureUnit", label = "Temperature")
+                WeatherDetail(value = "$tempValue$tempUnitSymbol", label = "Temperature")
                 WeatherDetail(value = "$windSpeed $windSpeedUnit", label = "Wind Speed")
             }
             Spacer(modifier = Modifier.height(12.dp))
@@ -98,7 +104,7 @@ fun WeatherStatsCard(weather: WeatherResponse, temperatureUnit: String, windSpee
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 WeatherDetail(value = "${weather.main.humidity}%", label = "Humidity")
-                WeatherDetail(value = "${weather.main.pressure} hPa", label = "Pressure")
+                WeatherDetail(value = "${weather.main.pressure}hPa", label = "Pressure")
             }
             Spacer(modifier = Modifier.height(12.dp))
             Row(

@@ -23,6 +23,10 @@ class WeatherRepository(
         return remoteDataSource.getHourlyForecast(lat, lon, apiKey)
     }
 
+    suspend fun get5DayForecast(lat: Double, lon: Double, apiKey: String): ForecastResponse {
+        return remoteDataSource.get5DayForecast(lat, lon, apiKey)
+    }
+
     // Favorite Location Operations
     suspend fun addFavoriteLocation(location: FavoriteLocationEntity) {
         localDataSource.addFavoriteLocation(location)
