@@ -25,8 +25,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
+
 @Composable
-fun ForecastScreen(location: FavoriteLocationEntity, viewModel: HomeViewModel, settingsViewModel: SettingsViewModel) {
+fun ForecastScreen(
+    location: FavoriteLocationEntity,
+    viewModel: HomeViewModel,
+    settingsViewModel: SettingsViewModel
+) {
     val weatherData by viewModel.weatherState.collectAsState(initial = null)
     val forecastData by viewModel.hourlyForecast.collectAsState(initial = null)
     val temperatureUnit by settingsViewModel.temperatureUnit.collectAsState()
@@ -59,86 +64,100 @@ fun ForecastScreen(location: FavoriteLocationEntity, viewModel: HomeViewModel, s
                         colors = listOf(Color(0xFF0F172A), Color(0xFF1E293B))
                     )
                 )
-                .padding(padding)
+                .padding(padding),
+            contentAlignment = Alignment.Center
         ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                item {
-                    weatherData?.let { weather ->
-                        val icon = WeatherIconUtil.getWeatherIcon(weather.weather.firstOrNull()?.icon ?: "")
-                        val dateFormat = SimpleDateFormat("EEEE, MMM d", Locale.getDefault()).format(Date())
-                        val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date())
+            if (weatherData == null || forecastData == null) {
+                CircularProgressIndicator(color = Color.White)
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize().padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    item {
+                        weatherData?.let { weather ->
+                            val icon = WeatherIconUtil.getWeatherIcon(weather.weather.firstOrNull()?.icon ?: "")
+                            val dateFormat = SimpleDateFormat("EEEE, MMM d", Locale.getDefault()).format(Date())
+                            val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date())
 
-                        val tempValue = convertTemperature(weather.main.temp, "celsius", temperatureUnit).roundToInt()
-                        val windSpeed = convertWindSpeed(weather.wind.speed, "kmh", windSpeedUnit).roundToInt()
+                            val tempValue = convertTemperature(weather.main.temp, "celsius", temperatureUnit).roundToInt()
+                            val windSpeed = convertWindSpeed(weather.wind.speed, "kmh", windSpeedUnit).roundToInt()
 
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.3f))
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(16.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.3f))
                             ) {
-                                Image(
-                                    painter = painterResource(id = icon),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(100.dp)
-                                )
-                                Spacer(modifier = Modifier.width(16.dp))
-                                Column {
-                                    Text("${tempValue}${tempUnitSymbol}", fontSize = 25.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                                    Text(weather.weather.firstOrNull()?.description ?: "No data", fontSize = 18.sp, color = Color.White)
-                                    Spacer(modifier = Modifier.height(12.dp))
-                                    Text(dateFormat, fontSize = 14.sp, color = Color.LightGray)
-                                    Text(timeFormat, fontSize = 14.sp, color = Color.LightGray)
-                                    Text("💧 Humidity: ${weather.main.humidity}%", fontSize = 14.sp, color = Color.LightGray)
-                                    Text("🌬 Wind: ${windSpeed} ${windSpeedUnit}", fontSize = 14.sp, color = Color.LightGray)
-                                    Text("🌡 Pressure: ${weather.main.pressure} hPa", fontSize = 14.sp, color = Color.LightGray)
-                                    Text("☁ Clouds: ${weather.clouds.Clouds}%", fontSize = 14.sp, color = Color.LightGray)
+                                Row(
+                                    modifier = Modifier.padding(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = icon),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(100.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(16.dp))
+                                    Column {
+                                        Text("${tempValue}${tempUnitSymbol}", fontSize = 25.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                        Text(weather.weather.firstOrNull()?.description ?: "No data", fontSize = 18.sp, color = Color.White)
+                                        Spacer(modifier = Modifier.height(12.dp))
+                                        Text(dateFormat, fontSize = 14.sp, color = Color.LightGray)
+                                        Text(timeFormat, fontSize = 14.sp, color = Color.LightGray)
+                                        Text("💧 Humidity: ${weather.main.humidity}%", fontSize = 14.sp, color = Color.LightGray)
+                                        Text("🌬 Wind: ${windSpeed} ${windSpeedUnit}", fontSize = 14.sp, color = Color.LightGray)
+                                        Text("🌡 Pressure: ${weather.main.pressure} hPa", fontSize = 14.sp, color = Color.LightGray)
+                                        Text("☁ Clouds: ${weather.clouds.Clouds}%", fontSize = 14.sp, color = Color.LightGray)
+                                    }
+                                }
+                            }
+                        } ?: Text("No weather data available", color = Color.White)
+                    }
+
+                    item { Spacer(modifier = Modifier.height(16.dp)) }
+
+                    item {
+                        Text(
+                            "Hourly Forecast",
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+
+                    forecastData?.list?.let { list ->
+                        items(list) { item ->
+                            val icon = WeatherIconUtil.getWeatherIcon(item.weather.firstOrNull()?.icon ?: "")
+                            val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date(item.dt * 1000L))
+                            val tempValue = convertTemperature(item.main.temp, "celsius", temperatureUnit).roundToInt()
+
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.3f))
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = icon),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(80.dp)
+                                    )
+                                    Text(text = "${tempValue}${tempUnitSymbol}", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                    Text(text = timeFormat, fontSize = 16.sp, color = Color.White)
                                 }
                             }
                         }
-                    } ?: Text("No weather data available", color = Color.White)
+                    } ?: item { Text("No forecast data available", color = Color.White) }
                 }
-
-                item { Spacer(modifier = Modifier.height(16.dp)) }
-
-                item { Text("Hourly Forecast", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White, modifier = Modifier.fillMaxWidth()) }
-
-                forecastData?.list?.let { list ->
-                    items(list) { item ->
-                        val icon = WeatherIconUtil.getWeatherIcon(item.weather.firstOrNull()?.icon ?: "")
-                        val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date(item.dt * 1000L))
-                        val tempValue = convertTemperature(item.main.temp, "celsius", temperatureUnit).roundToInt()
-
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.3f))
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Image(
-                                    painter = painterResource(id = icon),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(80.dp)
-                                )
-                                Text(text = "${tempValue}${tempUnitSymbol}", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                                Text(text = timeFormat, fontSize = 16.sp, color = Color.White)
-                            }
-                        }
-                    }
-                } ?: item { Text("No forecast data available", color = Color.White) }
             }
         }
     }
 }
+

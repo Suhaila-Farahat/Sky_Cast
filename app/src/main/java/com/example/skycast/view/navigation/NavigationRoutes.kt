@@ -17,8 +17,8 @@ sealed class BottomBarRoutes(
     object Favorites : BottomBarRoutes("Favorites", R.drawable.ic_fav)
 
     @Serializable
-    object WeatherAlerts : BottomBarRoutes("Alerts", R.drawable.ic_home)
+    object WeatherAlerts : BottomBarRoutes("Alerts", R.drawable.ic_alerts)
 
     @Serializable
-    object Settings : BottomBarRoutes("Settings", R.drawable.ic_home)
+    object Settings : BottomBarRoutes("Settings", R.drawable.ic_settings)
 }

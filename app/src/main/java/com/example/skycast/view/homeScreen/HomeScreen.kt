@@ -42,17 +42,20 @@ fun HomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(colors = listOf(Color(0xFF0F172A), Color(0xFF1E293B))))
-            .padding(16.dp),
-        contentAlignment = Alignment.TopCenter
+            .background(Brush.verticalGradient(colors = listOf(Color(0xFF0F172A), Color(0xFF1E293B)))),
+        contentAlignment = Alignment.Center // Ensures loading indicator is centered
     ) {
         when {
-            weatherState == null || hourlyForecastState == null -> CircularProgressIndicator(color = Color.White)
+            weatherState == null || hourlyForecastState == null || dailyForecastState.isEmpty() -> {
+                // Show progress indicator in the center of the screen
+                CircularProgressIndicator(color = Color.White)
+            }
             else -> {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxSize()
+                        .padding(16.dp)
                         .verticalScroll(rememberScrollState())
                 ) {
                     Spacer(modifier = Modifier.height(32.dp))
@@ -93,6 +96,7 @@ fun HomeScreen(
                         thickness = 1.dp,
                         color = Color.White.copy(alpha = 0.2f)
                     )
+
                     Text(
                         text = "5-Day Forecast",
                         color = Color.White,
@@ -102,12 +106,11 @@ fun HomeScreen(
                             .align(Alignment.Start)
                             .padding(vertical = 16.dp)
                     )
-                    if (dailyForecastState.isNotEmpty()) {
-                        DailyForecastSection(
-                            dailyForecasts = dailyForecastState,
-                            settingsViewModel = settingsViewModel
-                        )
-                    }
+
+                    DailyForecastSection(
+                        dailyForecasts = dailyForecastState,
+                        settingsViewModel = settingsViewModel
+                    )
                 }
             }
         }
