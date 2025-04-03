@@ -1,12 +1,19 @@
 package com.example.skycast.data.repo
 
+import android.content.Context
 import android.content.SharedPreferences
-import com.example.skycast.data.local.FavoriteLocationEntity
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
+import com.example.skycast.data.local.fav.FavoriteLocationEntity
 import com.example.skycast.data.local.LocalDataSource
+import com.example.skycast.data.local.alert.WeatherAlert
+import com.example.skycast.workers.WeatherAlertWorker
 import com.example.skycast.data.model.ForecastResponse
 import com.example.skycast.data.model.WeatherResponse
 import com.example.skycast.data.remote.RemoteDataSource
 import kotlinx.coroutines.flow.Flow
+import java.util.concurrent.TimeUnit
 
 class WeatherRepository(
     private val remoteDataSource: RemoteDataSource,
@@ -78,5 +85,41 @@ class WeatherRepository(
 
     fun setLanguage(lang: String) {
         sharedPreferences.edit().putString(LANGUAGE_KEY, lang).apply()
+    }
+
+
+
+    // Alert
+    suspend fun addWeatherAlert(alert: WeatherAlert) {
+        localDataSource.addWeatherAlert(alert)
+        // Schedule the alert after adding it to the database
+        if (sharedPreferences is Context) {
+            scheduleWeatherAlert(alert, sharedPreferences)
+        }
+    }
+
+    suspend fun removeWeatherAlert(alert: WeatherAlert) {
+        localDataSource.removeWeatherAlert(alert)
+    }
+
+    fun getActiveWeatherAlerts(): Flow<List<WeatherAlert>> {
+        return localDataSource.getActiveWeatherAlerts()
+    }
+
+    suspend fun deactivateWeatherAlert(alertId: Long) {
+        localDataSource.deactivateWeatherAlert(alertId)
+    }
+
+    suspend fun getWeatherAlertById(alertId: Long): WeatherAlert? {
+        return localDataSource.getWeatherAlertById(alertId)
+    }
+
+    private fun scheduleWeatherAlert(alert: WeatherAlert, context: Context) {
+        val workRequest = OneTimeWorkRequestBuilder<WeatherAlertWorker>()
+            .setInitialDelay(alert.time - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+            .setInputData(workDataOf("alert_id" to alert.id))
+            .build()
+
+        WorkManager.getInstance(context).enqueue(workRequest)
     }
 }

@@ -15,7 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.skycast.data.local.FavoriteLocationEntity
+import com.example.skycast.data.local.fav.FavoriteLocationEntity
 import com.example.skycast.utils.WeatherIconUtil
 import com.example.skycast.utils.convertTemperature
 import com.example.skycast.utils.convertWindSpeed
