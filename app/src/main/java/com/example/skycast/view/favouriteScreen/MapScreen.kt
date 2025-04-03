@@ -16,9 +16,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.widget.doAfterTextChanged
+import com.example.skycast.R
 import com.example.skycast.data.local.fav.FavoriteLocationEntity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -116,7 +118,6 @@ fun MapScreen(onLocationSelected: (FavoriteLocationEntity) -> Unit, onDismiss: (
                 )
             }
 
-            // Google Map
             GoogleMap(
                 modifier = Modifier.weight(1f),
                 cameraPositionState = cameraPositionState,
@@ -124,7 +125,6 @@ fun MapScreen(onLocationSelected: (FavoriteLocationEntity) -> Unit, onDismiss: (
                     selectedLocation = latLng
                     locationName = getLocationName(context, latLng.latitude, latLng.longitude)
 
-                    // Move camera to clicked location
                     cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(latLng, 8f))
                 }
             ) {
@@ -137,13 +137,12 @@ fun MapScreen(onLocationSelected: (FavoriteLocationEntity) -> Unit, onDismiss: (
             }
         }
 
-        // Save & Cancel Buttons
         Column(
             modifier = Modifier.align(Alignment.BottomCenter).padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(onClick = onDismiss, colors = ButtonDefaults.buttonColors(Color.Gray)) {
-                Text("Cancel")
+                Text(stringResource(id = R.string.cancel))
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -157,14 +156,13 @@ fun MapScreen(onLocationSelected: (FavoriteLocationEntity) -> Unit, onDismiss: (
                     )
                     onLocationSelected(locationEntity)
                 }) {
-                    Text("Save $locationName")
+                    Text(text = "${stringResource(R.string.save_location)} $locationName")
                 }
             }
         }
     }
 }
 
-// Get location from name
 fun getLocationFromName(context: Context, name: String): LatLng? {
     return try {
         val geocoder = Geocoder(context, Locale.getDefault())
@@ -179,7 +177,6 @@ fun getLocationFromName(context: Context, name: String): LatLng? {
     }
 }
 
-// Get location name from lat & lng
 fun getLocationName(context: Context, lat: Double, lng: Double): String {
     return try {
         val geocoder = Geocoder(context, Locale.getDefault())
@@ -197,7 +194,6 @@ fun getLocationName(context: Context, lat: Double, lng: Double): String {
     }
 }
 
-// Get autocomplete suggestions
 fun getAutoCompleteSuggestions(context: Context, query: String): List<String> {
     return try {
         val geocoder = Geocoder(context, Locale.getDefault())
@@ -207,3 +203,4 @@ fun getAutoCompleteSuggestions(context: Context, query: String): List<String> {
         emptyList()
     }
 }
+

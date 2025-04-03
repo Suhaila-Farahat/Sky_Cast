@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">سكاي كاست</string>
+    <string name="current_weather">الطقس الحالي</string>
+    <string name="temperature">درجة الحرارة</string>
+    <string name="wind_speed">سرعة الرياح</string>
+    <string name="humidity">الرطوبة</string>
+    <string name="pressure">الضغط</string>
+    <string name="cloud_coverage">تغطية السحب</string>
+    <string name="language">اللغة</string>
+    <string name="settings">الإعدادات</string>
+    <string name="choose_location_mode">اختر وضع الموقع</string>
+    <string name="use_gps">استخدام GPS</string>
+    <string name="choose_on_map">اختر على الخريطة</string>
+    <string name="temperature_unit">وحدة درجة الحرارة</string>
+    <string name="wind_speed_unit">وحدة سرعة الرياح</string>
+    <string name="add_weather_alert">إضافة تنبيه للطقس</string>
+    <string name="alert_date_and_time">تاريخ ووقت التنبيه</string>
+    <string name="set_date">تعيين التاريخ</string>
+    <string name="set_time">تعيين الوقت</string>
+    <string name="save">حفظ</string>
+    <string name="cancel">إلغاء</string>
+    <string name="cannot_set_alert_past_time">لا يمكن تعيين تنبيه لوقت ماضٍ</string>
+    <string name="no_weather_alerts">لا توجد تنبيهات للطقس</string>
+    <string name="tap_plus_button_create_alert">اضغط على زر + لإنشاء تنبيه جديد</string>
+    <string name="delete_alert">حذف التنبيه</string>
+    <string name="select_time">اختيار الوقت</string>
+    <string name="ok">موافق</string>
+    <string name="no_description">لا يوجد وصف</string>
+    <string name="no_favorite_locations">لم تتم إضافة مواقع مفضلة بعد!</string>
+    <string name="add_to_favorite">أضف إلى المفضلة</string>
+    <string name="no_weather_data">لا توجد بيانات للطقس</string>
+    <string name="no_forecast_data">لا توجد بيانات للتوقعات</string>
+    <string name="hourly_forecast">توقعات الساعة</string>
+    <string name="wind">🌬 الرياح:</string>
+    <string name="clouds"> الغيوم: </string>
+    <string name="remove">إزالة</string>
+    <string name="save_location">حفظ </string>
+    <string name="forecast_in">التوقعات في</string>
+    <string name="humidity_label">💧 الرطوبة:</string>
+    <string name="wind_label">🌬 الرياح:</string>
+    <string name="pressure_label">🌡 الضغط:</string>
+    <string name="clouds_label">☁ الغيوم:</string>
+
+</resources>

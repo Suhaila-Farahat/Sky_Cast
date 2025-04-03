@@ -11,8 +11,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.skycast.R
 import com.example.skycast.data.local.fav.FavoriteLocationEntity
 import com.example.skycast.viewModel.FavoriteViewModel
 
@@ -49,7 +51,7 @@ fun FavoriteScreen(viewModel: FavoriteViewModel, onLocationClick: (FavoriteLocat
             ) {
                 if (favoriteLocations.isEmpty()) {
                     Text(
-                        text = "No favorite locations added Yet!",
+                        text = stringResource(id = R.string.no_favorite_locations),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.align(Alignment.Center),
                         color = Color.White,

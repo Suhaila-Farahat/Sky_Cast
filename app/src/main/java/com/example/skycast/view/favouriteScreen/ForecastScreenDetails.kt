@@ -12,19 +12,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.skycast.R
 import com.example.skycast.data.local.fav.FavoriteLocationEntity
 import com.example.skycast.utils.WeatherIconUtil
 import com.example.skycast.utils.convertTemperature
 import com.example.skycast.utils.convertWindSpeed
+import com.example.skycast.utils.getWeatherDescriptionInArabic
 import com.example.skycast.viewModel.HomeViewModel
 import com.example.skycast.viewModel.SettingsViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
-
 
 @Composable
 fun ForecastScreen(
@@ -48,10 +50,19 @@ fun ForecastScreen(
         viewModel.fetchHourlyForecast(location.latitude, location.longitude)
     }
 
+    val arabicLocale = Locale("ar")
+    val dateFormat = SimpleDateFormat("EEEE, d MMM", arabicLocale).format(Date())
+    val timeFormat = SimpleDateFormat("hh:mm a", arabicLocale).format(Date())
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Forecast in ${location.name}", color = Color.White) },
+                title = {
+                    Text(
+                        text = "${stringResource(R.string.forecast_in)} ${location.name}",
+                        color = Color.White
+                    )
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF1E293B))
             )
         }
@@ -77,8 +88,6 @@ fun ForecastScreen(
                     item {
                         weatherData?.let { weather ->
                             val icon = WeatherIconUtil.getWeatherIcon(weather.weather.firstOrNull()?.icon ?: "")
-                            val dateFormat = SimpleDateFormat("EEEE, MMM d", Locale.getDefault()).format(Date())
-                            val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date())
 
                             val tempValue = convertTemperature(weather.main.temp, "celsius", temperatureUnit).roundToInt()
                             val windSpeed = convertWindSpeed(weather.wind.speed, "kmh", windSpeedUnit).roundToInt()
@@ -98,15 +107,51 @@ fun ForecastScreen(
                                     )
                                     Spacer(modifier = Modifier.width(16.dp))
                                     Column {
-                                        Text("${tempValue}${tempUnitSymbol}", fontSize = 25.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                                        Text(weather.weather.firstOrNull()?.description ?: "No data", fontSize = 18.sp, color = Color.White)
+                                        Text(
+                                            text = "$tempValue$tempUnitSymbol",
+                                            fontSize = 25.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White
+                                        )
+
+                                        Text(
+                                            text = getWeatherDescriptionInArabic(
+                                                weather.weather.firstOrNull()?.description
+                                                    ?: stringResource(R.string.no_weather_data)
+                                            ),
+                                            fontSize = 18.sp,
+                                            color = Color.White
+                                        )
+
                                         Spacer(modifier = Modifier.height(12.dp))
-                                        Text(dateFormat, fontSize = 14.sp, color = Color.LightGray)
-                                        Text(timeFormat, fontSize = 14.sp, color = Color.LightGray)
-                                        Text("💧 Humidity: ${weather.main.humidity}%", fontSize = 14.sp, color = Color.LightGray)
-                                        Text("🌬 Wind: ${windSpeed} ${windSpeedUnit}", fontSize = 14.sp, color = Color.LightGray)
-                                        Text("🌡 Pressure: ${weather.main.pressure} hPa", fontSize = 14.sp, color = Color.LightGray)
-                                        Text("☁ Clouds: ${weather.clouds.Clouds}%", fontSize = 14.sp, color = Color.LightGray)
+
+                                        Text(text = dateFormat, fontSize = 14.sp, color = Color.LightGray)
+                                        Text(text = timeFormat, fontSize = 14.sp, color = Color.LightGray)
+
+                                        Text(
+                                            text = "${stringResource(R.string.humidity_label)} ${weather.main.humidity}%",
+                                            fontSize = 14.sp,
+                                            color = Color.LightGray
+                                        )
+
+                                        Text(
+                                            text = "${stringResource(R.string.wind_label)} $windSpeed $windSpeedUnit",
+                                            fontSize = 14.sp,
+                                            color = Color.LightGray
+                                        )
+
+                                        Text(
+                                            text = "${stringResource(R.string.pressure_label)} ${weather.main.pressure} hPa",
+                                            fontSize = 14.sp,
+                                            color = Color.LightGray
+                                        )
+
+                                        Text(
+                                            text = "${stringResource(R.string.clouds_label)} ${weather.clouds.Clouds}%",
+                                            fontSize = 14.sp,
+                                            color = Color.LightGray
+                                        )
+
                                     }
                                 }
                             }
@@ -117,7 +162,7 @@ fun ForecastScreen(
 
                     item {
                         Text(
-                            "Hourly Forecast",
+                            stringResource(R.string.hourly_forecast),
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
@@ -128,7 +173,7 @@ fun ForecastScreen(
                     forecastData?.list?.let { list ->
                         items(list) { item ->
                             val icon = WeatherIconUtil.getWeatherIcon(item.weather.firstOrNull()?.icon ?: "")
-                            val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date(item.dt * 1000L))
+                            val timeFormat = SimpleDateFormat("hh:mm a", arabicLocale).format(Date(item.dt * 1000L))
                             val tempValue = convertTemperature(item.main.temp, "celsius", temperatureUnit).roundToInt()
 
                             Card(
@@ -149,15 +194,14 @@ fun ForecastScreen(
                                         contentDescription = null,
                                         modifier = Modifier.size(80.dp)
                                     )
-                                    Text(text = "${tempValue}${tempUnitSymbol}", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                    Text(text = "$tempValue$tempUnitSymbol", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White)
                                     Text(text = timeFormat, fontSize = 16.sp, color = Color.White)
                                 }
                             }
                         }
-                    } ?: item { Text("No forecast data available", color = Color.White) }
+                    } ?: item { Text(stringResource(R.string.no_forecast_data), color = Color.White) }
                 }
             }
         }
     }
 }
-
