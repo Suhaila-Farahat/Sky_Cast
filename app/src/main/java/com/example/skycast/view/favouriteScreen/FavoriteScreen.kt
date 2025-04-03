@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.skycast.data.local.FavoriteLocationEntity
+import com.example.skycast.data.local.fav.FavoriteLocationEntity
 import com.example.skycast.viewModel.FavoriteViewModel
 
 @Composable

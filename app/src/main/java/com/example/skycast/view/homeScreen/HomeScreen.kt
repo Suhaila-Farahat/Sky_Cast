@@ -43,11 +43,10 @@ fun HomeScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Brush.verticalGradient(colors = listOf(Color(0xFF0F172A), Color(0xFF1E293B)))),
-        contentAlignment = Alignment.Center // Ensures loading indicator is centered
+        contentAlignment = Alignment.Center
     ) {
         when {
             weatherState == null || hourlyForecastState == null || dailyForecastState.isEmpty() -> {
-                // Show progress indicator in the center of the screen
                 CircularProgressIndicator(color = Color.White)
             }
             else -> {

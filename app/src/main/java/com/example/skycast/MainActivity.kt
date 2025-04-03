@@ -4,6 +4,7 @@ import ForecastScreen
 import android.Manifest
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -11,6 +12,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,16 +33,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.skycast.data.local.FavoriteDatabase
-import com.example.skycast.data.local.FavoriteLocationEntity
+import com.example.skycast.data.local.fav.FavoriteLocationEntity
 import com.example.skycast.data.local.LocalDataSource
+import com.example.skycast.viewModel.AlertViewModel
+import com.example.skycast.viewModel.AlertViewModelFactory
+import com.example.skycast.view.alertScreen.WeatherAlertsScreen
 import com.example.skycast.data.remote.RemoteDataSource
 import com.example.skycast.data.remote.RetrofitClient
 import com.example.skycast.data.repo.WeatherRepository
-import com.example.skycast.view.settingScreen.SettingsScreen
-import com.example.skycast.view.WeatherAlertsScreen
 import com.example.skycast.view.favouriteScreen.FavoriteScreen
 import com.example.skycast.view.homeScreen.HomeScreen
 import com.example.skycast.view.navigation.BottomBarRoutes
+import com.example.skycast.view.settingScreen.SettingsScreen
 import com.example.skycast.viewModel.FavoriteViewModel
 import com.example.skycast.viewModel.FavoriteViewModelFactory
 import com.example.skycast.viewModel.HomeViewModel
@@ -57,7 +61,9 @@ class MainActivity : ComponentActivity() {
     private val weatherRepository: WeatherRepository by lazy {
         WeatherRepository(
             RemoteDataSource(RetrofitClient.apiService),
-            LocalDataSource(FavoriteDatabase.getDatabase(application).favoriteLocationDao()),
+            LocalDataSource(
+                FavoriteDatabase.getDatabase(application).favoriteLocationDao(),
+                FavoriteDatabase.getDatabase(application).weatherAlertDao()),
             sharedPreferences
         )
     }
@@ -74,6 +80,10 @@ class MainActivity : ComponentActivity() {
         SettingsViewModelFactory(weatherRepository)
     }
 
+    private val alertViewModel: AlertViewModel by viewModels {
+        AlertViewModelFactory(application, weatherRepository)
+    }
+
     private val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -86,6 +96,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -98,17 +109,19 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme {
-                MainScreen(homeViewModel, favoriteViewModel, settingsViewModel)
+                MainScreen(homeViewModel, favoriteViewModel, settingsViewModel, alertViewModel)
             }
         }
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainScreen(
     homeViewModel: HomeViewModel,
     favoriteViewModel: FavoriteViewModel,
-    settingsViewModel: SettingsViewModel
+    settingsViewModel: SettingsViewModel,
+    alertViewModel: AlertViewModel
 ) {
     val navController = rememberNavController()
 
@@ -120,20 +133,20 @@ fun MainScreen(
             homeViewModel,
             favoriteViewModel,
             settingsViewModel,
+            alertViewModel,
             Modifier.padding(paddingValues)
         )
     }
 }
 
-
-
-
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavigationGraph(
     navController: NavHostController,
     homeViewModel: HomeViewModel,
     favoriteViewModel: FavoriteViewModel,
     settingsViewModel: SettingsViewModel,
+    alertViewModel: AlertViewModel,
     modifier: Modifier
 ) {
     NavHost(
@@ -141,14 +154,14 @@ fun NavigationGraph(
         startDestination = BottomBarRoutes.Home.title,
         modifier = modifier
     ) {
-        composable(BottomBarRoutes.Home.title) { HomeScreen(homeViewModel,settingsViewModel) }
+        composable(BottomBarRoutes.Home.title) { HomeScreen(homeViewModel, settingsViewModel) }
         composable(BottomBarRoutes.Favorites.title) {
             FavoriteScreen(favoriteViewModel) { location ->
                 Log.d("FavoriteScreen", "Navigating to Forecast with: ${location.name}, ${location.latitude}, ${location.longitude}")
                 navController.navigate("forecast/${location.latitude}/${location.longitude}/${location.name}")
             }
         }
-        composable(BottomBarRoutes.WeatherAlerts.title) { WeatherAlertsScreen() }
+        composable(BottomBarRoutes.WeatherAlerts.title) { WeatherAlertsScreen(alertViewModel) }
         composable(BottomBarRoutes.Settings.title) { SettingsScreen(settingsViewModel) }
 
         composable("forecast/{lat}/{lon}/{name}") { backStackEntry ->
@@ -157,7 +170,7 @@ fun NavigationGraph(
             val name = backStackEntry.arguments?.getString("name") ?: "Unknown"
 
             val location = FavoriteLocationEntity(name = name, latitude = lat, longitude = lon)
-            ForecastScreen(location, homeViewModel,settingsViewModel)
+            ForecastScreen(location, homeViewModel, settingsViewModel)
         }
     }
 }

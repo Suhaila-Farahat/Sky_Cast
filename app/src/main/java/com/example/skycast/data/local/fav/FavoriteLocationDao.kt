@@ -1,4 +1,4 @@
-package com.example.skycast.data.local
+package com.example.skycast.data.local.fav
 
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
