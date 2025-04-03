@@ -3,7 +3,6 @@ package com.example.skycast.viewModel
 import android.annotation.SuppressLint
 import android.app.Application
 import android.location.Location
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
