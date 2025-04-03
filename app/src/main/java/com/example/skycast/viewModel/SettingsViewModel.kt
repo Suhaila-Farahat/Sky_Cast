@@ -33,6 +33,8 @@ class SettingsViewModel(private val repository: WeatherRepository) : ViewModel()
         viewModelScope.launch {
             repository.setTemperatureUnit(unit)
             _temperatureUnit.value = unit
+            // Automatically update wind speed unit when temperature changes
+            updateWindSpeedUnitBasedOnTemperatureUnit(unit)
         }
     }
 
@@ -49,8 +51,14 @@ class SettingsViewModel(private val repository: WeatherRepository) : ViewModel()
             _language.value = lang
         }
     }
-}
 
+    private fun updateWindSpeedUnitBasedOnTemperatureUnit(temperatureUnit: String) {
+        // Example logic for auto-changing wind speed unit based on temperature unit
+        val newWindSpeedUnit = if (temperatureUnit == "Celsius") "meter/sec" else "miles/hour"
+        repository.setWindSpeedUnit(newWindSpeedUnit)
+        _windSpeedUnit.value = newWindSpeedUnit
+    }
+}
 
 class SettingsViewModelFactory(private val repository: WeatherRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

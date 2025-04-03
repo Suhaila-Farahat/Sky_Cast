@@ -87,8 +87,6 @@ class WeatherRepository(
         sharedPreferences.edit().putString(LANGUAGE_KEY, lang).apply()
     }
 
-
-
     // Alert
     suspend fun addWeatherAlert(alert: WeatherAlert) {
         localDataSource.addWeatherAlert(alert)
