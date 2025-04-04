@@ -18,13 +18,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.skycast.data.model.HourlyWeather
+import com.example.skycast.utils.LanguageUtils
 import com.example.skycast.viewModel.HomeViewModel
 import com.example.skycast.viewModel.SettingsViewModel
 
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
-    settingsViewModel: SettingsViewModel
+    settingsViewModel: SettingsViewModel,
+    languageUtils: LanguageUtils
 ) {
     val weatherState by viewModel.weatherState.collectAsState()
     val hourlyForecastState by viewModel.hourlyForecast.collectAsState()
@@ -59,7 +61,7 @@ fun HomeScreen(
                 ) {
                     Spacer(modifier = Modifier.height(32.dp))
 
-                    CurrentWeatherSection(weatherState!!, settingsViewModel)
+                    CurrentWeatherSection(weatherState!!, settingsViewModel, languageUtils)
 
                     HorizontalDivider(
                         modifier = Modifier.padding(vertical = 8.dp),

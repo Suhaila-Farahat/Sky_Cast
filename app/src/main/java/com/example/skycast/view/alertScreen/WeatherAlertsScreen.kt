@@ -13,12 +13,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.example.skycast.R
 import com.example.skycast.data.local.alert.WeatherAlert
 import com.example.skycast.viewModel.AlertViewModel
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 @Composable
 fun WeatherAlertsScreen(
@@ -37,7 +40,7 @@ fun WeatherAlertsScreen(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add Alert"
+                    contentDescription = stringResource(id = R.string.add_weather_alert)
                 )
             }
         }
@@ -46,7 +49,7 @@ fun WeatherAlertsScreen(
             modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(Brush.verticalGradient(colors = listOf(Color(0xFF0F172A), Color(0xFF1E293B)))) // Gradient background
+                .background(Brush.verticalGradient(colors = listOf(Color(0xFF0F172A), Color(0xFF1E293B)))),
         ) {
             if (alerts.isEmpty()) {
                 EmptyAlertsMessage(modifier = Modifier.align(Alignment.Center))
@@ -78,19 +81,18 @@ private fun EmptyAlertsMessage(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "No weather alerts",
+            text = stringResource(id = R.string.no_weather_alerts),
             style = MaterialTheme.typography.headlineSmall,
-            color = Color.White // Custom text color
+            color = Color.White
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Tap the + button to create a new alert",
+            text = stringResource(id = R.string.tap_plus_button_create_alert),
             style = MaterialTheme.typography.bodyMedium,
-            color = Color.White // Custom text color
+            color = Color.White
         )
     }
 }
-
 @Composable
 private fun AlertsList(
     alerts: List<WeatherAlert>,
@@ -143,7 +145,7 @@ private fun AlertItem(
                 Text(
                     text = formattedDate,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.White // Custom text color
+                    color = Color.White
                 )
 
                 IconButton(
@@ -152,13 +154,12 @@ private fun AlertItem(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete Alert",
-                        tint = MaterialTheme.colorScheme.error // Custom delete icon color
+                        contentDescription = stringResource(id = R.string.delete_alert),
+                        tint = MaterialTheme.colorScheme.error
                     )
                 }
             }
 
-            // Main alert message centered vertically and horizontally
             Column(
                 modifier = Modifier
                     .align(Alignment.Center)
@@ -168,7 +169,7 @@ private fun AlertItem(
                     style = MaterialTheme.typography.bodyLarge,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
-                    color = Color.White // Custom text color
+                    color = Color.White
                 )
             }
         }

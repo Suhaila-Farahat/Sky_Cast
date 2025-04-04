@@ -1,5 +1,6 @@
 package com.example.skycast.viewModel
 
+import android.content.res.Resources
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -7,9 +8,10 @@ import com.example.skycast.data.repo.WeatherRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.Locale
+import android.content.res.Configuration
 
 class SettingsViewModel(private val repository: WeatherRepository) : ViewModel() {
-
     private val _locationMode = MutableStateFlow(repository.getLocationMode())
     val locationMode = _locationMode.asStateFlow()
 
@@ -49,7 +51,21 @@ class SettingsViewModel(private val repository: WeatherRepository) : ViewModel()
         viewModelScope.launch {
             repository.setLanguage(lang)
             _language.value = lang
+            updateAppLanguage(lang)
         }
+    }
+
+    private fun updateAppLanguage(lang: String) {
+        val locale = when (lang) {
+            "Arabic" -> Locale("ar")
+            else -> Locale("en")
+        }
+
+        Locale.setDefault(locale)
+
+        val config = Configuration(Resources.getSystem().configuration)
+        config.setLocale(locale)
+        Resources.getSystem().updateConfiguration(config, Resources.getSystem().displayMetrics)
     }
 
     private fun updateWindSpeedUnitBasedOnTemperatureUnit(temperatureUnit: String) {

@@ -5,13 +5,17 @@ import android.content.SharedPreferences
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
-import com.example.skycast.data.local.fav.FavoriteLocationEntity
 import com.example.skycast.data.local.LocalDataSource
 import com.example.skycast.data.local.alert.WeatherAlert
-import com.example.skycast.workers.WeatherAlertWorker
+import com.example.skycast.data.local.fav.FavoriteLocationEntity
+import com.example.skycast.data.local.home.DailyForecastEntity
+import com.example.skycast.data.local.home.HourlyForecastEntity
+import com.example.skycast.data.local.home.WeatherEntity
+import com.example.skycast.data.local.home.toWeatherResponse
 import com.example.skycast.data.model.ForecastResponse
 import com.example.skycast.data.model.WeatherResponse
 import com.example.skycast.data.remote.RemoteDataSource
+import com.example.skycast.workers.WeatherAlertWorker
 import kotlinx.coroutines.flow.Flow
 import java.util.concurrent.TimeUnit
 
@@ -33,6 +37,33 @@ class WeatherRepository(
     suspend fun get5DayForecast(lat: Double, lon: Double, apiKey: String): ForecastResponse {
         return remoteDataSource.get5DayForecast(lat, lon, apiKey)
     }
+
+    // Local caching methods
+    suspend fun cacheWeather(weatherEntity: WeatherEntity) {
+        localDataSource.addWeatherData(weatherEntity)
+    }
+
+    suspend fun getCachedWeather(): WeatherResponse? {
+        val cachedWeather = localDataSource.getLastWeatherData()
+        return cachedWeather?.toWeatherResponse()
+    }
+
+    suspend fun cacheHourlyForecast(hourlyForecast: List<HourlyForecastEntity>) {
+        localDataSource.addHourlyForecast(hourlyForecast)
+    }
+
+    suspend fun getCachedHourlyForecast(): List<HourlyForecastEntity> {
+        return localDataSource.getHourlyForecast()
+    }
+
+    suspend fun cacheDailyForecast(dailyForecast: List<DailyForecastEntity>) {
+        localDataSource.addDailyForecast(dailyForecast)
+    }
+
+    suspend fun getCachedDailyForecast(): List<DailyForecastEntity> {
+        return localDataSource.getDailyForecast()
+    }
+
 
     // Favorite Location Operations
     suspend fun addFavoriteLocation(location: FavoriteLocationEntity) {
@@ -90,7 +121,6 @@ class WeatherRepository(
     // Alert
     suspend fun addWeatherAlert(alert: WeatherAlert) {
         localDataSource.addWeatherAlert(alert)
-        // Schedule the alert after adding it to the database
         if (sharedPreferences is Context) {
             scheduleWeatherAlert(alert, sharedPreferences)
         }

@@ -20,6 +20,7 @@ import androidx.work.WorkerParameters
 import com.example.skycast.R
 import com.example.skycast.data.local.FavoriteDatabase
 import com.example.skycast.data.local.LocalDataSource
+import com.example.skycast.data.local.home.WeatherDatabase
 import com.example.skycast.data.model.WeatherResponse
 import com.example.skycast.data.remote.RemoteDataSource
 import com.example.skycast.data.remote.RetrofitClient
@@ -45,29 +46,27 @@ class WeatherAlertWorker(
         RemoteDataSource(RetrofitClient.apiService),
         LocalDataSource(
             FavoriteDatabase.getDatabase(application).favoriteLocationDao(),
-            FavoriteDatabase.getDatabase(application).weatherAlertDao()
+            FavoriteDatabase.getDatabase(application).weatherAlertDao(),
+            WeatherDatabase.getDatabase(application).weatherDao()
+
         ),
         context.getSharedPreferences("skycast_prefs", Context.MODE_PRIVATE)
     )
 
-    private val apiKey = "c3b0faa25a8011e4d3ac4978f4b092f7"
+    private val apiKey = "AIzaSyAHK3TPTpi8UyPDofhu27t_m2Q8UuBdq6k"
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
-            // Check if specific coordinates were provided
             val providedLatitude = inputData.getDouble("latitude", Double.MIN_VALUE)
             val providedLongitude = inputData.getDouble("longitude", Double.MIN_VALUE)
 
-            // If coordinates weren't provided or they're the default values, get current location
             val (latitude, longitude) = if (providedLatitude != Double.MIN_VALUE && providedLongitude != Double.MIN_VALUE) {
                 Pair(providedLatitude, providedLongitude)
             } else {
-                // Get current location
                 val location = getCurrentLocation()
                 if (location != null) {
                     Pair(location.latitude, location.longitude)
                 } else {
-                    // Failed to get location, notify user and return failure
                     sendNotification("Weather Alert", "Unable to get your current location")
                     return@withContext Result.failure()
                 }

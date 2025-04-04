@@ -8,6 +8,7 @@ import android.os.Build
 import androidx.work.Configuration
 import com.example.skycast.data.local.FavoriteDatabase
 import com.example.skycast.data.local.LocalDataSource
+import com.example.skycast.data.local.home.WeatherDatabase
 import com.example.skycast.data.remote.RemoteDataSource
 import com.example.skycast.data.remote.RetrofitClient
 import com.example.skycast.data.repo.WeatherRepository
@@ -23,7 +24,9 @@ class MyApplication : Application(), Configuration.Provider {
         val remoteDataSource = RemoteDataSource(RetrofitClient.apiService)
         val localDataSource = LocalDataSource(
             FavoriteDatabase.getDatabase(applicationContext).favoriteLocationDao(),
-            FavoriteDatabase.getDatabase(applicationContext).weatherAlertDao()
+            FavoriteDatabase.getDatabase(applicationContext).weatherAlertDao(),
+            WeatherDatabase.getDatabase(applicationContext).weatherDao()
+
         )
         val sharedPreferences = getSharedPreferences("skycast_prefs", MODE_PRIVATE)
 

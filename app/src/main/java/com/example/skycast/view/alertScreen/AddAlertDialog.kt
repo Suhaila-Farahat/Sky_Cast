@@ -2,7 +2,6 @@
 
 package com.example.skycast.view.alertScreen
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -33,7 +32,7 @@ fun AddAlertDialog(
         title = {
             Text(
                 text = "Add Weather Alert",
-                color = Color.White, // Title color matching HomeScreen's text color
+                color = Color.White,
                 style = MaterialTheme.typography.titleMedium
             )
         },
@@ -46,7 +45,7 @@ fun AddAlertDialog(
                 Text(
                     text = "Alert Date and Time",
                     style = MaterialTheme.typography.titleMedium,
-                    color = Color.White // Custom text color
+                    color = Color.White
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -61,7 +60,7 @@ fun AddAlertDialog(
                         modifier = Modifier
                             .align(alignment = Alignment.CenterVertically)
                             .weight(1f),
-                        color = Color.White // Custom text color
+                        color = Color.White
                     )
 
                     Button(
@@ -69,7 +68,7 @@ fun AddAlertDialog(
                         modifier = Modifier.padding(start = 8.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E293B)) // Custom button color
                     ) {
-                        Text("Set Date", color = Color.White) // Button text color
+                        Text("Set Date", color = Color.White)
                     }
                 }
 
@@ -85,7 +84,7 @@ fun AddAlertDialog(
                         modifier = Modifier
                             .align(alignment = Alignment.CenterVertically)
                             .weight(1f),
-                        color = if (timeError) MaterialTheme.colorScheme.error else Color.White // Custom error color
+                        color = if (timeError) MaterialTheme.colorScheme.error else Color.White
                     )
 
                     if (timeError) {
@@ -99,9 +98,9 @@ fun AddAlertDialog(
                     Button(
                         onClick = { showTimePicker = true },
                         modifier = Modifier.padding(start = 8.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E293B)) // Custom button color
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E293B))
                     ) {
-                        Text("Set Time", color = Color.White) // Button text color
+                        Text("Set Time", color = Color.White)
                     }
                 }
             }
@@ -116,7 +115,7 @@ fun AddAlertDialog(
                         else -> {
                             val alert = WeatherAlert(
                                 id = 0,
-                                alertMessage = "",  // No alert message
+                                alertMessage = "",
                                 time = calendar.timeInMillis,
                                 isActive = true
                             )
@@ -125,15 +124,15 @@ fun AddAlertDialog(
                     }
                 }
             ) {
-                Text("Save", color = Color.White) // Confirm button text color
+                Text("Save", color = Color.White)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = Color.White) // Dismiss button text color
+                Text("Cancel", color = Color.White)
             }
         },
-        containerColor = Color(0xFF0F172A) // Custom background color matching HomeScreen's background
+        containerColor = Color(0xFF0F172A)
     )
 
     if (showDatePicker) {

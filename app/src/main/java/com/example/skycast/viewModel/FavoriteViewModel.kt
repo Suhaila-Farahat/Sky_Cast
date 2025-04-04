@@ -29,7 +29,7 @@ class FavoriteViewModel(private val repository: WeatherRepository) : ViewModel()
     fun addFavorite(location: FavoriteLocationEntity) {
         viewModelScope.launch {
             repository.addFavoriteLocation(location)
-            loadFavorites() // Refresh favorites after adding
+            loadFavorites()
         }
     }
 

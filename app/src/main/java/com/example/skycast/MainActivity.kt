@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -35,12 +36,14 @@ import androidx.navigation.compose.rememberNavController
 import com.example.skycast.data.local.FavoriteDatabase
 import com.example.skycast.data.local.fav.FavoriteLocationEntity
 import com.example.skycast.data.local.LocalDataSource
+import com.example.skycast.data.local.home.WeatherDatabase
 import com.example.skycast.viewModel.AlertViewModel
 import com.example.skycast.viewModel.AlertViewModelFactory
 import com.example.skycast.view.alertScreen.WeatherAlertsScreen
 import com.example.skycast.data.remote.RemoteDataSource
 import com.example.skycast.data.remote.RetrofitClient
 import com.example.skycast.data.repo.WeatherRepository
+import com.example.skycast.utils.LanguageUtils
 import com.example.skycast.view.favouriteScreen.FavoriteScreen
 import com.example.skycast.view.homeScreen.HomeScreen
 import com.example.skycast.view.navigation.BottomBarRoutes
@@ -63,7 +66,9 @@ class MainActivity : ComponentActivity() {
             RemoteDataSource(RetrofitClient.apiService),
             LocalDataSource(
                 FavoriteDatabase.getDatabase(application).favoriteLocationDao(),
-                FavoriteDatabase.getDatabase(application).weatherAlertDao()),
+                FavoriteDatabase.getDatabase(application).weatherAlertDao(),
+                WeatherDatabase.getDatabase(application).weatherDao()
+            ),
             sharedPreferences
         )
     }
@@ -154,7 +159,10 @@ fun NavigationGraph(
         startDestination = BottomBarRoutes.Home.title,
         modifier = modifier
     ) {
-        composable(BottomBarRoutes.Home.title) { HomeScreen(homeViewModel, settingsViewModel) }
+        composable(BottomBarRoutes.Home.title) {
+            val languageUtils = LanguageUtils( LocalContext.current)
+            HomeScreen(homeViewModel, settingsViewModel, languageUtils = languageUtils)
+        }
         composable(BottomBarRoutes.Favorites.title) {
             FavoriteScreen(favoriteViewModel) { location ->
                 Log.d("FavoriteScreen", "Navigating to Forecast with: ${location.name}, ${location.latitude}, ${location.longitude}")
@@ -162,8 +170,10 @@ fun NavigationGraph(
             }
         }
         composable(BottomBarRoutes.WeatherAlerts.title) { WeatherAlertsScreen(alertViewModel) }
-        composable(BottomBarRoutes.Settings.title) { SettingsScreen(settingsViewModel) }
-
+        composable(BottomBarRoutes.Settings.title) {
+            val context = LocalContext.current
+            SettingsScreen(settingsViewModel, context)
+        }
         composable("forecast/{lat}/{lon}/{name}") { backStackEntry ->
             val lat = backStackEntry.arguments?.getString("lat")?.toDoubleOrNull() ?: 0.0
             val lon = backStackEntry.arguments?.getString("lon")?.toDoubleOrNull() ?: 0.0

@@ -9,16 +9,13 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.example.skycast.data.local.FavoriteDatabase
 import com.example.skycast.data.local.LocalDataSource
-import com.example.skycast.data.local.alert.WeatherAlert
+import com.example.skycast.data.local.home.WeatherDatabase
 import com.example.skycast.data.remote.RemoteDataSource
 import com.example.skycast.data.remote.RetrofitClient
 import com.example.skycast.data.repo.WeatherRepository
 import com.example.skycast.workers.WeatherAlertWorker
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 
 class BootBroadcastReceiver : BroadcastReceiver() {
@@ -29,12 +26,13 @@ class BootBroadcastReceiver : BroadcastReceiver() {
                 RemoteDataSource(RetrofitClient.apiService),
                 LocalDataSource(
                     FavoriteDatabase.getDatabase(context).favoriteLocationDao(),
-                    FavoriteDatabase.getDatabase(context).weatherAlertDao()
+                    FavoriteDatabase.getDatabase(context).weatherAlertDao(),
+                    WeatherDatabase.getDatabase(context).weatherDao()
+
                 ),
                 context.getSharedPreferences("skycast_prefs", Context.MODE_PRIVATE)
             )
 
-            // Fetch all active weather alerts from the repository
             runBlocking {
                 val alerts = repository.getActiveWeatherAlerts().first() // Collect the first value from the flow
 
