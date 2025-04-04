@@ -21,7 +21,7 @@ import com.example.skycast.data.local.fav.FavoriteLocationEntity
 import com.example.skycast.utils.WeatherIconUtil
 import com.example.skycast.utils.convertTemperature
 import com.example.skycast.utils.convertWindSpeed
-import com.example.skycast.utils.getWeatherDescriptionInArabic
+import com.example.skycast.utils.getWeatherDescription
 import com.example.skycast.viewModel.HomeViewModel
 import com.example.skycast.viewModel.SettingsViewModel
 import java.text.SimpleDateFormat
@@ -45,14 +45,22 @@ fun ForecastScreen(
         else -> "°C"
     }
 
+    // Get the current system language
+    val language = Locale.getDefault().language
+    val currentLocale = remember { Locale(language) }
+
+    // Recompute current date and time when locale changes
+    val dateFormat = SimpleDateFormat("EEEE, d MMM", currentLocale)
+    val timeFormat = SimpleDateFormat("hh:mm a", currentLocale)
+
+    // Force recomposition when language changes
+    val currentDate = remember(currentLocale) { dateFormat.format(Date()) }
+    val currentTime = remember(currentLocale) { timeFormat.format(Date()) }
+
     LaunchedEffect(location.latitude, location.longitude) {
         viewModel.fetchWeatherByLocation(location.latitude, location.longitude)
         viewModel.fetchHourlyForecast(location.latitude, location.longitude)
     }
-
-    val arabicLocale = Locale("ar")
-    val dateFormat = SimpleDateFormat("EEEE, d MMM", arabicLocale).format(Date())
-    val timeFormat = SimpleDateFormat("hh:mm a", arabicLocale).format(Date())
 
     Scaffold(
         topBar = {
@@ -92,6 +100,8 @@ fun ForecastScreen(
                             val tempValue = convertTemperature(weather.main.temp, "celsius", temperatureUnit).roundToInt()
                             val windSpeed = convertWindSpeed(weather.wind.speed, "kmh", windSpeedUnit).roundToInt()
 
+                            val description = getWeatherDescription(weather.weather.firstOrNull()?.description ?: "", currentLocale)
+
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.3f))
@@ -115,18 +125,15 @@ fun ForecastScreen(
                                         )
 
                                         Text(
-                                            text = getWeatherDescriptionInArabic(
-                                                weather.weather.firstOrNull()?.description
-                                                    ?: stringResource(R.string.no_weather_data)
-                                            ),
+                                            text = description,
                                             fontSize = 18.sp,
                                             color = Color.White
                                         )
 
                                         Spacer(modifier = Modifier.height(12.dp))
 
-                                        Text(text = dateFormat, fontSize = 14.sp, color = Color.LightGray)
-                                        Text(text = timeFormat, fontSize = 14.sp, color = Color.LightGray)
+                                        Text(text = currentDate, fontSize = 14.sp, color = Color.LightGray)
+                                        Text(text = currentTime, fontSize = 14.sp, color = Color.LightGray)
 
                                         Text(
                                             text = "${stringResource(R.string.humidity_label)} ${weather.main.humidity}%",
@@ -151,7 +158,6 @@ fun ForecastScreen(
                                             fontSize = 14.sp,
                                             color = Color.LightGray
                                         )
-
                                     }
                                 }
                             }
@@ -173,7 +179,7 @@ fun ForecastScreen(
                     forecastData?.list?.let { list ->
                         items(list) { item ->
                             val icon = WeatherIconUtil.getWeatherIcon(item.weather.firstOrNull()?.icon ?: "")
-                            val timeFormat = SimpleDateFormat("hh:mm a", arabicLocale).format(Date(item.dt * 1000L))
+                            val timeFormat = SimpleDateFormat("hh:mm a", currentLocale).format(Date(item.dt * 1000L))
                             val tempValue = convertTemperature(item.main.temp, "celsius", temperatureUnit).roundToInt()
 
                             Card(
@@ -205,3 +211,4 @@ fun ForecastScreen(
         }
     }
 }
+

@@ -29,7 +29,7 @@
     <string name="cancel">Cancel</string>
     <string name="no_favorite_locations">No favorite locations added Yet!</string>
     <string name="add_to_favorite">Add To Favorite</string>
-    <string name="forecast_in">Forecast in %1$s</string>
+    <string name="forecast_in">Forecast in</string>
     <string name="no_weather_data">No weather data available</string>
     <string name="no_forecast_data">No forecast data available</string>
     <string name="hourly_forecast">Hourly Forecast</string>
@@ -41,4 +41,5 @@
     <string name="wind_label">🌬 Wind:</string>
     <string name="pressure_label">🌡 Pressure:</string>
     <string name="clouds_label">☁ Clouds:</string>
+
 </resources>
