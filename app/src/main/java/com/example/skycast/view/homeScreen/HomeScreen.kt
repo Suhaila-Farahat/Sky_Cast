@@ -14,9 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.skycast.R
 import com.example.skycast.data.model.HourlyWeather
 import com.example.skycast.utils.LanguageUtils
 import com.example.skycast.viewModel.HomeViewModel
@@ -70,7 +72,7 @@ fun HomeScreen(
                     )
 
                     Text(
-                        text = "Hourly Forecast",
+                        text = stringResource(id = R.string.hourly_forecast),
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
@@ -99,7 +101,7 @@ fun HomeScreen(
                     )
 
                     Text(
-                        text = "5-Day Forecast",
+                        text = stringResource(id = R.string.five_days),
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,

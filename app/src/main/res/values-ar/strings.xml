@@ -41,4 +41,6 @@
     <string name="wind_label">🌬 الرياح:</string>
     <string name="pressure_label">🌡 الضغط:</string>
     <string name="clouds_label">☁ الغيوم:</string>
+    <string name="five_days">التوقعات لخمسة ايام</string>
+
 </resources>

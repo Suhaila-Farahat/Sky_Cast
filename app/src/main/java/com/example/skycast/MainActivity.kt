@@ -82,7 +82,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private val settingsViewModel: SettingsViewModel by viewModels {
-        SettingsViewModelFactory(weatherRepository)
+        SettingsViewModelFactory(application,weatherRepository)
     }
 
     private val alertViewModel: AlertViewModel by viewModels {

@@ -33,6 +33,7 @@
     <string name="no_weather_data">No weather data available</string>
     <string name="no_forecast_data">No forecast data available</string>
     <string name="hourly_forecast">Hourly Forecast</string>
+    <string name="five_days">5-Day Forecast</string>
     <string name="wind">🌬 Wind: </string>
     <string name="clouds">☁ Clouds:</string>
     <string name="remove">Remove</string>

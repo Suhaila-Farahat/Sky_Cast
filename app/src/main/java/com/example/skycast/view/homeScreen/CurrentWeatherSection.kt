@@ -122,8 +122,22 @@ fun getFormattedTime(languageCode: String): String {
 
 @Composable
 fun WeatherStatsCard(weather: WeatherResponse, settingsViewModel: SettingsViewModel) {
-    val tempValue = convertTemperature(weather.main.temp, "celsius", settingsViewModel.temperatureUnit.value).roundToInt()
-    val windSpeed = convertWindSpeed(weather.wind.speed, "kmh", settingsViewModel.windSpeedUnit.value).roundToInt()
+    // Convert temperature and wind speed
+    val tempValue = convertTemperature(weather.main.temp, "celsius", settingsViewModel.temperatureUnit.toString()).roundToInt()
+    val windSpeed = convertWindSpeed(weather.wind.speed, "kmh", settingsViewModel.windSpeedUnit.toString()).roundToInt()
+
+    // Define temperature and wind speed unit symbols
+    val tempUnitSymbol = when (settingsViewModel.temperatureUnit.toString()) {
+        "Fahrenheit" -> "°F"
+        "Kelvin" -> "K"
+        else -> "°C"
+    }
+
+    val windSpeedUnitSymbol = when (settingsViewModel.windSpeedUnit.toString()) {
+        "kmh" -> "km/h"
+        "mph" -> "mph"
+        else -> "m/s"
+    }
 
     Card(
         modifier = Modifier
@@ -140,8 +154,8 @@ fun WeatherStatsCard(weather: WeatherResponse, settingsViewModel: SettingsViewMo
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                WeatherDetail(value = "$tempValue°", label = stringResource(id = R.string.temperature))
-                WeatherDetail(value = "$windSpeed km/h", label = stringResource(id = R.string.wind_speed))
+                WeatherDetail(value = "$tempValue$tempUnitSymbol", label = stringResource(id = R.string.temperature))
+                WeatherDetail(value = "$windSpeed $windSpeedUnitSymbol", label = stringResource(id = R.string.wind_speed))
             }
             Spacer(modifier = Modifier.height(12.dp))
             Row(
@@ -169,4 +183,5 @@ fun WeatherDetail(value: String, label: String) {
         Text(text = value, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
     }
 }
+
 

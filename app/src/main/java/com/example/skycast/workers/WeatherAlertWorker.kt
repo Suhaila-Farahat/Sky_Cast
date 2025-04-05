@@ -53,7 +53,7 @@ class WeatherAlertWorker(
         context.getSharedPreferences("skycast_prefs", Context.MODE_PRIVATE)
     )
 
-    private val apiKey = "AIzaSyAHK3TPTpi8UyPDofhu27t_m2Q8UuBdq6k"
+    private val apiKey = "c3b0faa25a8011e4d3ac4978f4b092f7"
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
