@@ -52,6 +52,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.junit.ktx)
+    implementation(libs.androidx.runner)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -94,6 +96,16 @@ dependencies {
     implementation ("com.google.maps.android:maps-compose:2.15.0")
 
     implementation ("androidx.work:work-runtime-ktx:2.7.1")
+//test
+    testImplementation ("org.mockito:mockito-core:3.9.0")
+    testImplementation ("org.mockito:mockito-inline:3.9.0")
+    testImplementation ("org.junit.jupiter:junit-jupiter-api:5.6.2")
+    testImplementation ("org.junit.jupiter:junit-jupiter-engine:5.6.2")
+    testImplementation ("androidx.test:core:1.4.0")
+    testImplementation ("io.mockk:mockk:1.13.10")
+    testImplementation ("junit:junit:4.13.2")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation ("androidx.arch.core:core-testing:2.2.0")
 
 
 }

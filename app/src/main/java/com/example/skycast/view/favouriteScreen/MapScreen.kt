@@ -39,14 +39,12 @@ fun MapScreen(onLocationSelected: (FavoriteLocationEntity) -> Unit, onDismiss: (
     var suggestions by remember { mutableStateOf(listOf<String>()) }
     val coroutineScope = rememberCoroutineScope()
 
-    // Camera position state
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(LatLng(0.0, 0.0), 2f)
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Search Bar with AutoComplete
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
