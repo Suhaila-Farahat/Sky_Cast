@@ -21,20 +21,17 @@ fun getFormattedTime(): String {
 
 
 fun getFormattedDateAndTime(language: String): Pair<String, String> {
-    // Set the locale based on the selected language
     val locale = when (language) {
-        "ar" -> Locale("ar") // Arabic
-        "en" -> Locale("en") // English
-        else -> Locale.getDefault() // Default system locale
+        "ar" -> Locale("ar")
+        "en" -> Locale("en")
+        else -> Locale.getDefault()
     }
 
-    // Create the date and time format based on the selected language
-    val dateFormat = SimpleDateFormat("EEEE, d MMM", locale) // "EEEE" gives the day name, "d MMM" gives the day and month
-    val timeFormat = SimpleDateFormat("hh:mm a", locale) // "hh:mm a" gives the time in 12-hour format with AM/PM
+    val dateFormat = SimpleDateFormat("EEEE, d MMM", locale)
+    val timeFormat = SimpleDateFormat("hh:mm a", locale)
 
-    // Get the current date and time
     val currentDate = dateFormat.format(Date())
     val currentTime = timeFormat.format(Date())
 
-    return Pair(currentDate, currentTime) // Return formatted date and time as a pair
+    return Pair(currentDate, currentTime)
 }

@@ -45,15 +45,12 @@ fun ForecastScreen(
         else -> "°C"
     }
 
-    // Get the current system language
     val language = Locale.getDefault().language
     val currentLocale = remember { Locale(language) }
 
-    // Recompute current date and time when locale changes
     val dateFormat = SimpleDateFormat("EEEE, d MMM", currentLocale)
     val timeFormat = SimpleDateFormat("hh:mm a", currentLocale)
 
-    // Force recomposition when language changes
     val currentDate = remember(currentLocale) { dateFormat.format(Date()) }
     val currentTime = remember(currentLocale) { timeFormat.format(Date()) }
 

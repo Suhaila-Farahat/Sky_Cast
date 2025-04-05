@@ -113,16 +113,16 @@ fun HourlyForecastEntity.toForecastItem(): ForecastItem {
         main = MainInfo(
             temp = temp,
             humidity = humidity,
-            pressure = 0 // Adjust if pressure data is available
+            pressure = 0
         ),
         weather = listOf(
             WeatherInfo(
-                id = 0,  // You can adjust if you have an actual ID
-                description = "", // You can add default values if you need
+                id = 0,
+                description = "",
                 icon = icon
             )
         ),
-        dt_txt = "" // You can fill this with an actual timestamp or format as necessary
+        dt_txt = ""
     )
 }
 

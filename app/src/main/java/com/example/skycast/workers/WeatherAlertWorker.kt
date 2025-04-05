@@ -72,13 +72,10 @@ class WeatherAlertWorker(
                 }
             }
 
-            // Log the coordinates being used
             Log.d("WeatherAlertWorker", "Fetching weather for coordinates: $latitude, $longitude")
 
-            // Fetch weather data from the repository
             val weatherResponse = weatherRepository.getWeather(latitude, longitude, apiKey)
 
-            // Process the notification with weather data
             processWeatherNotification(weatherResponse)
 
             Result.success()

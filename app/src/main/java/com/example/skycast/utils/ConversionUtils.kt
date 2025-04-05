@@ -1,11 +1,9 @@
 package com.example.skycast.utils
 
-// Function to convert temperature between units
 fun convertTemperature(temperature: Double, fromUnit: String, toUnit: String): Double {
     val normalizedFromUnit = fromUnit.lowercase()
     val normalizedToUnit = toUnit.lowercase()
 
-    // If the units are the same, return the original temperature
     if (normalizedFromUnit == normalizedToUnit) return temperature
 
     return when (normalizedFromUnit) {
@@ -24,11 +22,10 @@ fun convertTemperature(temperature: Double, fromUnit: String, toUnit: String): D
             "fahrenheit" -> kelvinToFahrenheit(temperature)
             else -> temperature
         }
-        else -> temperature // Return original temperature if unsupported unit
+        else -> temperature
     }
 }
 
-// Helper functions for temperature conversion
 fun celsiusToFahrenheit(celsius: Double): Double = (celsius * 9 / 5) + 32
 fun celsiusToKelvin(celsius: Double): Double = celsius + 273.15
 
@@ -39,12 +36,10 @@ fun kelvinToCelsius(kelvin: Double): Double = kelvin - 273.15
 fun kelvinToFahrenheit(kelvin: Double): Double = celsiusToFahrenheit(kelvinToCelsius(kelvin))
 
 
-// Function to convert wind speed between units
 fun convertWindSpeed(speed: Double, fromUnit: String, toUnit: String): Double {
     val normalizedFromUnit = fromUnit.lowercase()
     val normalizedToUnit = toUnit.lowercase()
 
-    // If the units are the same, return the original speed
     if (normalizedFromUnit == normalizedToUnit) return speed
 
     return when (normalizedFromUnit) {
@@ -76,7 +71,6 @@ fun convertWindSpeed(speed: Double, fromUnit: String, toUnit: String): Double {
     }
 }
 
-// Helper functions for wind speed conversion
 fun kmhToMph(kmh: Double): Double = kmh * 0.621371
 fun kmhToKnots(kmh: Double): Double = kmh * 0.539957
 fun kmhToMs(kmh: Double): Double = kmh / 3.6

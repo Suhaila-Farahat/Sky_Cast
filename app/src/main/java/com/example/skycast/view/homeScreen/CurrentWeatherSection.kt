@@ -42,32 +42,26 @@ import kotlin.math.roundToInt
 fun CurrentWeatherSection(
     weather: WeatherResponse,
     settingsViewModel: SettingsViewModel,
-    languageUtils: LanguageUtils // Injecting language utils to get saved language
+    languageUtils: LanguageUtils
 ) {
-    // Get the saved language from SharedPreferences
     val language = languageUtils.getSavedLanguage()
 
-    // Conditionally format the date and time based on the saved language
     val currentTime = remember { getFormattedTime(language) }
     val currentDate = remember { getFormattedDate(language) }
 
-    // Fetch temperature and wind speed settings from ViewModel
     val temperatureUnit by settingsViewModel.temperatureUnit.collectAsState()
     val windSpeedUnit by settingsViewModel.windSpeedUnit.collectAsState()
 
-    // Define the temperature unit symbol
     val tempUnitSymbol = when (temperatureUnit) {
         "Fahrenheit" -> "°F"
         "Kelvin" -> "K"
         else -> "°C"
     }
 
-    // Composable layout
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
-        // Display city name
         Text(
             text = weather.name,
             color = Color.White,
@@ -75,7 +69,6 @@ fun CurrentWeatherSection(
             fontWeight = FontWeight.Bold
         )
 
-        // Display current date and time
         Text(
             text = "$currentDate || $currentTime",
             color = Color.White.copy(alpha = 0.7f),
@@ -83,7 +76,6 @@ fun CurrentWeatherSection(
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Display weather description
         Text(
             text = weather.weather.firstOrNull()?.description?.replaceFirstChar { it.uppercase() }
                 ?: stringResource(id = R.string.no_description),
@@ -93,7 +85,6 @@ fun CurrentWeatherSection(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Display weather icon
         Image(
             painter = painterResource(id = WeatherIconUtil.getWeatherIcon(weather.weather.firstOrNull()?.icon ?: "01d")),
             contentDescription = "Weather Icon",
@@ -101,32 +92,27 @@ fun CurrentWeatherSection(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Display weather stats card
         WeatherStatsCard(weather, settingsViewModel)
     }
 }
 
-// Function to get formatted date based on the selected language
 fun getFormattedDate(languageCode: String): String {
-    val locale = Locale(languageCode)  // Use the selected language
+    val locale = Locale(languageCode)
     val dateFormat = SimpleDateFormat("EEEE, d MMM", locale)
     return dateFormat.format(Date())
 }
 
-// Function to get formatted time based on the selected language
 fun getFormattedTime(languageCode: String): String {
-    val locale = Locale(languageCode)  // Use the selected language
+    val locale = Locale(languageCode)
     val timeFormat = SimpleDateFormat("hh:mm a", locale)
     return timeFormat.format(Date())
 }
 
 @Composable
 fun WeatherStatsCard(weather: WeatherResponse, settingsViewModel: SettingsViewModel) {
-    // Convert temperature and wind speed
     val tempValue = convertTemperature(weather.main.temp, "celsius", settingsViewModel.temperatureUnit.toString()).roundToInt()
     val windSpeed = convertWindSpeed(weather.wind.speed, "kmh", settingsViewModel.windSpeedUnit.toString()).roundToInt()
 
-    // Define temperature and wind speed unit symbols
     val tempUnitSymbol = when (settingsViewModel.temperatureUnit.toString()) {
         "Fahrenheit" -> "°F"
         "Kelvin" -> "K"

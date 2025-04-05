@@ -46,7 +46,6 @@ class AlertViewModel(
     }
 
     fun scheduleAlertWork(alert: WeatherAlert) {
-        // Calculate delay in milliseconds
         val delay = alert.time - System.currentTimeMillis()
 
         if (delay > 0) {

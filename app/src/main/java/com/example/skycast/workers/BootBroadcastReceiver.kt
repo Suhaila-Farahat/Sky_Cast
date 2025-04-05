@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit
 class BootBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
-            // Initialize repository
             val repository = WeatherRepository(
                 RemoteDataSource(RetrofitClient.apiService),
                 LocalDataSource(
@@ -34,27 +33,22 @@ class BootBroadcastReceiver : BroadcastReceiver() {
             )
 
             runBlocking {
-                val alerts = repository.getActiveWeatherAlerts().first() // Collect the first value from the flow
+                val alerts = repository.getActiveWeatherAlerts().first()
 
-                // Iterate over each alert and schedule work
                 alerts.forEach { alert ->
-                    // Calculate the delay based on alert time
                     val delay = alert.time - System.currentTimeMillis()
 
                     if (delay > 0) {
-                        // Create a work request to trigger the alert after the calculated delay
                         val workRequest = OneTimeWorkRequestBuilder<WeatherAlertWorker>()
                             .setInitialDelay(delay, TimeUnit.MILLISECONDS)
-                            .setInputData(workDataOf("alert_id" to alert.id)) // Use 'id' as input
+                            .setInputData(workDataOf("alert_id" to alert.id))
                             .build()
 
-                        // Enqueue the work request to handle the alert
                         WorkManager.getInstance(context).enqueue(workRequest)
                     }
                 }
             }
 
-            // Show a toast indicating that alerts have been rescheduled
             Toast.makeText(context, "Alerts rescheduled after reboot", Toast.LENGTH_SHORT).show()
         }
     }
