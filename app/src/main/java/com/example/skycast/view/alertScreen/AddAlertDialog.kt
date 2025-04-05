@@ -26,6 +26,7 @@ fun AddAlertDialog(
     var showTimePicker by remember { mutableStateOf(false) }
 
     var timeError by remember { mutableStateOf(false) }
+    var dateError by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -60,11 +61,14 @@ fun AddAlertDialog(
                         modifier = Modifier
                             .align(alignment = Alignment.CenterVertically)
                             .weight(1f),
-                        color = Color.White
+                        color = if (dateError) MaterialTheme.colorScheme.error else Color.White
                     )
 
                     Button(
-                        onClick = { showDatePicker = true },
+                        onClick = {
+                            showDatePicker = true
+                            dateError = false
+                        },
                         modifier = Modifier.padding(start = 8.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E293B)) // Custom button color
                     ) {
@@ -87,14 +91,6 @@ fun AddAlertDialog(
                         color = if (timeError) MaterialTheme.colorScheme.error else Color.White
                     )
 
-                    if (timeError) {
-                        Text(
-                            text = "Cannot set alert for past time",
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-
                     Button(
                         onClick = { showTimePicker = true },
                         modifier = Modifier.padding(start = 8.dp),
@@ -102,6 +98,24 @@ fun AddAlertDialog(
                     ) {
                         Text("Set Time", color = Color.White)
                     }
+                }
+
+                if (timeError) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Cannot set alert for past time",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
+                if (dateError) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Cannot set alert for past date",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
             }
         },
@@ -111,6 +125,7 @@ fun AddAlertDialog(
                     when {
                         calendar.timeInMillis < System.currentTimeMillis() -> {
                             timeError = true
+                            dateError = true
                         }
                         else -> {
                             val alert = WeatherAlert(
@@ -122,7 +137,8 @@ fun AddAlertDialog(
                             onAddAlert(alert)
                         }
                     }
-                }
+                },
+                enabled = !timeError && !dateError
             ) {
                 Text("Save", color = Color.White)
             }
@@ -141,6 +157,7 @@ fun AddAlertDialog(
             onDateSelected = { year, month, day ->
                 calendar.set(year, month, day)
                 showDatePicker = false
+                dateError = false
             }
         )
     }
