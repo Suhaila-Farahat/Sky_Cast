@@ -160,8 +160,7 @@ fun NavigationGraph(
         modifier = modifier
     ) {
         composable(BottomBarRoutes.Home.title) {
-            val languageUtils = LanguageUtils( LocalContext.current)
-            HomeScreen(homeViewModel, settingsViewModel, languageUtils = languageUtils)
+            HomeScreen(homeViewModel, settingsViewModel)
         }
         composable(BottomBarRoutes.Favorites.title) {
             FavoriteScreen(favoriteViewModel) { location ->
@@ -171,8 +170,7 @@ fun NavigationGraph(
         }
         composable(BottomBarRoutes.WeatherAlerts.title) { WeatherAlertsScreen(alertViewModel) }
         composable(BottomBarRoutes.Settings.title) {
-            val context = LocalContext.current
-            SettingsScreen(settingsViewModel, context)
+            SettingsScreen(settingsViewModel)
         }
         composable("forecast/{lat}/{lon}/{name}") { backStackEntry ->
             val lat = backStackEntry.arguments?.getString("lat")?.toDoubleOrNull() ?: 0.0

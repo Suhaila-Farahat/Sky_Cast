@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -23,7 +24,11 @@ import com.example.skycast.viewModel.SettingsViewModel
 import java.util.Locale
 
 @Composable
-fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), context: Context) {
+fun SettingsScreen(
+    viewModel: SettingsViewModel = viewModel()
+) {
+
+    val context = LocalContext.current
     val locationMode by viewModel.locationMode.collectAsState()
     val temperatureUnit by viewModel.temperatureUnit.collectAsState()
     val windSpeedUnit by viewModel.windSpeedUnit.collectAsState()

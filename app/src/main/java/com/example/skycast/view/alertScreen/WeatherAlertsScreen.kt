@@ -22,14 +22,16 @@ import com.example.skycast.viewModel.AlertViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 @Composable
 fun WeatherAlertsScreen(
-    viewModel: AlertViewModel,
-    modifier: Modifier = Modifier
+    viewModel: AlertViewModel
 ) {
     val alerts by viewModel.alerts.collectAsState()
     var showAddAlertDialog by remember { mutableStateOf(false) }
+
+    val modifier = Modifier
+        .fillMaxSize()
+        .background(Brush.verticalGradient(colors = listOf(Color(0xFF0F172A), Color(0xFF1E293B))))
 
     Scaffold(
         floatingActionButton = {
@@ -46,10 +48,7 @@ fun WeatherAlertsScreen(
         }
     ) { paddingValues ->
         Box(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .background(Brush.verticalGradient(colors = listOf(Color(0xFF0F172A), Color(0xFF1E293B)))),
+            modifier = modifier.padding(paddingValues),
         ) {
             if (alerts.isEmpty()) {
                 EmptyAlertsMessage(modifier = Modifier.align(Alignment.Center))
@@ -93,6 +92,7 @@ private fun EmptyAlertsMessage(modifier: Modifier = Modifier) {
         )
     }
 }
+
 @Composable
 private fun AlertsList(
     alerts: List<WeatherAlert>,

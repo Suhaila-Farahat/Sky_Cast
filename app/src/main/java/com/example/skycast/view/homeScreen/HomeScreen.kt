@@ -14,22 +14,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.skycast.R
 import com.example.skycast.data.model.HourlyWeather
-import com.example.skycast.utils.LanguageUtils
 import com.example.skycast.viewModel.HomeViewModel
 import com.example.skycast.viewModel.SettingsViewModel
+import com.example.skycast.utils.LanguageUtils
 
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
-    settingsViewModel: SettingsViewModel,
-    languageUtils: LanguageUtils
+    settingsViewModel: SettingsViewModel
 ) {
+    val context = LocalContext.current
+    val languageUtils = remember { LanguageUtils(context) }
+
     val weatherState by viewModel.weatherState.collectAsState()
     val hourlyForecastState by viewModel.hourlyForecast.collectAsState()
     val dailyForecastState by viewModel.dailyForecast.collectAsState()
@@ -46,7 +49,7 @@ fun HomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(colors = listOf(Color(0xFF0F172A), Color(0xFF1E293B)))),
+            .background(Brush.verticalGradient(colors = listOf(Color(0xFF0F172A), Color(0xFF1E293B)))) ,
         contentAlignment = Alignment.Center
     ) {
         when {

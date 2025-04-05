@@ -70,7 +70,7 @@ fun AddAlertDialog(
                             dateError = false
                         },
                         modifier = Modifier.padding(start = 8.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E293B)) // Custom button color
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1E293B))
                     ) {
                         Text("Set Date", color = Color.White)
                     }

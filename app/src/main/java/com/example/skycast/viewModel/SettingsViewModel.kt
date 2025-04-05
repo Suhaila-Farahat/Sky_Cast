@@ -12,7 +12,10 @@ import java.util.Locale
 import android.content.res.Configuration
 import androidx.lifecycle.AndroidViewModel
 
-class SettingsViewModel(application: Application, private val repository: WeatherRepository) : AndroidViewModel(application) {
+class SettingsViewModel(
+    application: Application,
+    private val repository: WeatherRepository
+) : AndroidViewModel(application) {
 
     private val _locationMode = MutableStateFlow(repository.getLocationMode())
     val locationMode = _locationMode.asStateFlow()
@@ -37,7 +40,6 @@ class SettingsViewModel(application: Application, private val repository: Weathe
         viewModelScope.launch {
             repository.setTemperatureUnit(unit)
             _temperatureUnit.value = unit
-            // Automatically update wind speed unit when temperature changes
             updateWindSpeedUnitBasedOnTemperatureUnit(unit)
         }
     }
