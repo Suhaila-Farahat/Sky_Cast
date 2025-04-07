@@ -31,13 +31,14 @@ import com.example.skycast.utils.LanguageUtils
 import com.example.skycast.utils.WeatherIconUtil
 import com.example.skycast.utils.convertTemperature
 import com.example.skycast.utils.convertWindSpeed
+import com.example.skycast.utils.getFormattedDate
+import com.example.skycast.utils.getFormattedTime
 import com.example.skycast.viewModel.SettingsViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlin.math.roundToInt
 
-@SuppressLint("RememberReturnType")
 @Composable
 fun CurrentWeatherSection(
     weather: WeatherResponse,
@@ -46,8 +47,8 @@ fun CurrentWeatherSection(
 ) {
     val language = languageUtils.getSavedLanguage()
 
-    val currentTime = remember { getFormattedTime(language) }
-    val currentDate = remember { getFormattedDate(language) }
+    val currentTime = remember { getFormattedTime() }
+    val currentDate = remember { getFormattedDate() }
 
     val temperatureUnit by settingsViewModel.temperatureUnit.collectAsState()
     val windSpeedUnit by settingsViewModel.windSpeedUnit.collectAsState()
@@ -92,34 +93,29 @@ fun CurrentWeatherSection(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        WeatherStatsCard(weather, settingsViewModel)
+        WeatherStatsCard(weather, settingsViewModel, temperatureUnit, windSpeedUnit)
     }
 }
 
-fun getFormattedDate(languageCode: String): String {
-    val locale = Locale(languageCode)
-    val dateFormat = SimpleDateFormat("EEEE, d MMM", locale)
-    return dateFormat.format(Date())
-}
-
-fun getFormattedTime(languageCode: String): String {
-    val locale = Locale(languageCode)
-    val timeFormat = SimpleDateFormat("hh:mm a", locale)
-    return timeFormat.format(Date())
-}
-
 @Composable
-fun WeatherStatsCard(weather: WeatherResponse, settingsViewModel: SettingsViewModel) {
-    val tempValue = convertTemperature(weather.main.temp, "celsius", settingsViewModel.temperatureUnit.toString()).roundToInt()
-    val windSpeed = convertWindSpeed(weather.wind.speed, "kmh", settingsViewModel.windSpeedUnit.toString()).roundToInt()
+fun WeatherStatsCard(
+    weather: WeatherResponse,
+    settingsViewModel: SettingsViewModel,
+    temperatureUnit: String,
+    windSpeedUnit: String
+) {
+    val tempValue = convertTemperature(weather.main.temp, "celsius", temperatureUnit).roundToInt()
 
-    val tempUnitSymbol = when (settingsViewModel.temperatureUnit.toString()) {
+    val windSpeed = convertWindSpeed(weather.wind.speed, "kmh", windSpeedUnit).roundToInt()
+
+    val tempUnitSymbol = when (temperatureUnit) {
         "Fahrenheit" -> "°F"
         "Kelvin" -> "K"
         else -> "°C"
     }
 
-    val windSpeedUnitSymbol = when (settingsViewModel.windSpeedUnit.toString()) {
+    // Correctly handle wind speed units
+    val windSpeedUnitSymbol = when (windSpeedUnit) {
         "kmh" -> "km/h"
         "mph" -> "mph"
         else -> "m/s"
@@ -141,22 +137,22 @@ fun WeatherStatsCard(weather: WeatherResponse, settingsViewModel: SettingsViewMo
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 WeatherDetail(value = "$tempValue$tempUnitSymbol", label = stringResource(id = R.string.temperature))
-                WeatherDetail(value = "$windSpeed $windSpeedUnitSymbol", label = stringResource(id = R.string.wind_speed))
+                WeatherDetail(value = "$windSpeed $windSpeedUnitSymbol", label = stringResource(id = R.string.wind))
             }
             Spacer(modifier = Modifier.height(12.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                WeatherDetail(value = "${weather.main.humidity}%", label = stringResource(id = R.string.humidity))
-                WeatherDetail(value = "${weather.main.pressure}hPa", label = stringResource(id = R.string.pressure))
+                WeatherDetail(value = "${weather.main.humidity}%", label = stringResource(id = R.string.humidity_label))
+                WeatherDetail(value = "${weather.main.pressure}hPa", label = stringResource(id = R.string.pressure_label))
             }
             Spacer(modifier = Modifier.height(12.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                WeatherDetail(value = "${weather.clouds.Clouds}%", label = stringResource(id = R.string.cloud_coverage))
+                WeatherDetail(value = "${weather.clouds.Clouds}%", label = stringResource(id = R.string.clouds))
             }
         }
     }
@@ -169,5 +165,4 @@ fun WeatherDetail(value: String, label: String) {
         Text(text = value, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
     }
 }
-
 

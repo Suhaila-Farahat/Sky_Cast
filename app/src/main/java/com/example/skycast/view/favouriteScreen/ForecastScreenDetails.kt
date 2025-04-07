@@ -139,7 +139,7 @@ fun ForecastScreen(
                                         )
 
                                         Text(
-                                            text = "${stringResource(R.string.wind_label)} $windSpeed $windSpeedUnit",
+                                            text = "${stringResource(R.string.wind)} $windSpeed $windSpeedUnit",
                                             fontSize = 14.sp,
                                             color = Color.LightGray
                                         )
@@ -151,7 +151,7 @@ fun ForecastScreen(
                                         )
 
                                         Text(
-                                            text = "${stringResource(R.string.clouds_label)} ${weather.clouds.Clouds}%",
+                                            text = "${stringResource(R.string.clouds)} ${weather.clouds.Clouds}%",
                                             fontSize = 14.sp,
                                             color = Color.LightGray
                                         )

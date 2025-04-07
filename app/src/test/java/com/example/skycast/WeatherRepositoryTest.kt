@@ -28,7 +28,7 @@ class WeatherRepositoryTest {
     fun setup() {
         remoteDataSource = mockk()
         localDataSource = mockk()
-        sharedPreferences = mockk(relaxed = true)
+        sharedPreferences = mockk()
 
         weatherRepository = WeatherRepository(remoteDataSource, localDataSource, sharedPreferences)
     }

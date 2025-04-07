@@ -32,8 +32,8 @@ class SettingsViewModelTest {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        application = mockk(relaxed = true)
-        repository = mockk(relaxed = true)
+        application = mockk()
+        repository = mockk()
 
         every { repository.getLocationMode() } returns "GPS"
         every { repository.getTemperatureUnit() } returns "Fahrenheit"

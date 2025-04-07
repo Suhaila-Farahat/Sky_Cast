@@ -118,7 +118,7 @@ class WeatherAlertWorker(
         }
     }
 
-    private suspend fun processWeatherNotification(weatherResponse: WeatherResponse) {
+    private fun processWeatherNotification(weatherResponse: WeatherResponse) {
         val locationName = weatherResponse.name
 
         val formattedLocation = locationName

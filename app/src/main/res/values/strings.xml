@@ -2,11 +2,7 @@
 <resources>
     <string name="app_name">SkyCast</string>
     <string name="current_weather">Current Weather</string>
-    <string name="temperature">Temperature</string>
-    <string name="wind_speed">Wind Speed</string>
-    <string name="humidity">Humidity</string>
-    <string name="pressure">Pressure</string>
-    <string name="cloud_coverage">Cloud Coverage</string>
+    <string name="temperature"> 🌡Temperature</string>
     <string name="language">Language</string>
     <string name="settings">Settings</string>
     <string name="choose_location_mode">Choose Location Mode</string>
@@ -34,13 +30,10 @@
     <string name="no_forecast_data">No forecast data available</string>
     <string name="hourly_forecast">Hourly Forecast</string>
     <string name="five_days">5-Day Forecast</string>
-    <string name="wind">🌬 Wind: </string>
-    <string name="clouds">☁ Clouds:</string>
+    <string name="wind">🌬 Wind </string>
+    <string name="clouds">☁ Clouds</string>
     <string name="remove">Remove</string>
     <string name="save_location">Save</string>
-    <string name="humidity_label">💧 Humidity:</string>
-    <string name="wind_label">🌬 Wind:</string>
-    <string name="pressure_label">🌡 Pressure:</string>
-    <string name="clouds_label">☁ Clouds:</string>
-
+    <string name="humidity_label">💧 Humidity</string>
+    <string name="pressure_label">🧭 Pressure</string>
 </resources>
