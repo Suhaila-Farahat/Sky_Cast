@@ -1,34 +1,55 @@
 🌤️ SkyCast
 
-SkyCast is a sleek and intuitive weather forecasting app that provides real-time weather data, 7-day forecasts, and location-based updates powered by OpenWeatherMap API.
+SkyCast is an Android weather app that delivers real-time and forecasted weather data with a focus on user customization and offline accessibility. It features location-based tracking, customizable alerts, multi-language and unit support, and a clean, intuitive UI.
 
 🚀 Features
 
-⛅ Real-time weather updates based on location
+⛅ Real-time weather updates based on current location
 
-🌍 Search weather by city or coordinates
+🌍 Weather search by city or coordinates
 
-📅 7-day forecast with temperature, humidity, and wind data
+📅 7-day forecast with temperature, humidity, and wind speed
 
-🎨 Beautiful and responsive UI
+🔔 Customizable weather alerts
 
-🌙 Dark mode support (optional)
+🌐 Multi-language and unit conversion support
+
+📡 Offline access with cached weather data
+
+🎨 Material Design-compliant UI with light/dark themes
+
+🗺️ Integrated Google Maps for location selection
+
+
+
 
 
 📸 Screenshots
-![splash](https://github.com/user-attachments/assets/b6c1295e-450e-4b1e-b81f-e6ac292e7c19)
-![SkyCast ](https://github.com/user-attachments/assets/eeacff2f-ac1a-42d8-b656-ee693efaad53)
-![forecast](https://github.com/user-attachments/assets/a878ce39-292d-4b99-b13d-6ccaa610351f)
-![settings](https://github.com/user-attachments/assets/c43e4371-cb5f-49d2-bac2-cca4aca668d0)
-![alert](https://github.com/user-attachments/assets/162ec05f-2e56-478e-8e87-32bf9dbf5210)
 
 
-🛠️ Tech Stack
 
-Framework: React / Flutter / Native (choose yours)
 
-API: OpenWeatherMap / WeatherAPI / etc.
+<img src="https://github.com/user-attachments/assets/b6c1295e-450e-4b1e-b81f-e6ac292e7c19" alt="splash" width="250"/>
+<img src="https://github.com/user-attachments/assets/eeacff2f-ac1a-42d8-b656-ee693efaad53" alt="SkyCast" width="250"/>
+<img src="https://github.com/user-attachments/assets/a878ce39-292d-4b99-b13d-6ccaa610351f" alt="forecast" width="250"/>
+<img src="https://github.com/user-attachments/assets/c43e4371-cb5f-49d2-bac2-cca4aca668d0" alt="settings" width="250"/>
+<img src="https://github.com/user-attachments/assets/162ec05f-2e56-478e-8e87-32bf9dbf5210" alt="alert" width="250"/>
 
-Styling: Tailwind CSS / CSS Modules / Styled Components
 
-State Management: Redux / Context API / etc.
+
+
+
+
+🛠️ Tools & Technologies
+
+- **Language:** Kotlin  
+- **Architecture:** MVVM (Model-View-ViewModel)  
+- **Networking:** Retrofit  
+- **Database:** Room  
+- **Concurrency:** Coroutines, WorkManager  
+- **Weather Data:** OpenWeatherMap API  
+- **Storage:** SharedPreferences  
+- **Maps & Location:** Google Maps  
+- **UI/UX:** Material Design  
+- **Project Management:** Trello  
+- **Version Control:** Git & GitHub  
